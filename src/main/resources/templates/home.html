@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default_layout">
+<head>
+<title>왓비</title>
+<meta charset="UTF-8">
+</head>
+<th:block layout:fragment="content">
+<style>
+.border-t {
+	border-top-width: 1px
+}
+body {
+	background-color: #f1f3f5;
+	height: 100vh;
+	width: 100vw;
+}
+.container {
+	display: grid;
+	padding: 20px;
+	min-height: 550px;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+	grid-column-gap: 50px;
+	grid-template-areas: 
+		'a a'
+		'left right'
+		'left notice'
+}
+section{
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	box-sizing: border-box;
+}
+.left{
+	grid-area: left;
+}
+.right {
+	display: flex;
+	justify-content: center;
+	grid-area: right;
+}
+.notice {
+	grid-area: notice;
+}
+.login_area {
+	padding: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: center;
+}
+
+.login_btn{
+	width: 380px;
+	height: 50px;
+	background-color: #3540A5;
+	color: #fff;
+	border-radius: 7px;
+	border: 1px solid #3450A5;
+}
+
+.link_more {
+	display: flex;
+	justify-content: center;
+}
+.link_more a {
+}
+</style>
+<body>
+	
+<div class="container">
+		<section class="left">	
+            <h2>전체 게시판 정보</h2>
+            <h5>공지사항</h5>
+            <h5>관리자 메세지 </h5>
+            <h5>문의내역 답변 </h5>
+            <h5>&ast; 자유게시판 게시글: </h5>
+            <h5>&ast; 골드게시판 게시글: </h5>
+            <h5><a href="/watb/reserve">예약하기</h5>
+	    </section>
+	    <section class="right">
+			<div class="login_area">
+				<div th:if="${#authorization.expression('!isAuthenticated()')}">
+                	<button class="login_btn" onclick="location.href = '/users/login'">로그인</button>
+                	<div class="link_more">
+	               		<a href="/users/join">비밀번호 찾기</a>|
+	               		<a href="/users/join">회원가입</a>
+					</div>
+				</div>
+	            <div th:unless="${#authorization.expression('!isAuthenticated()')}">
+                	<span th:text="${#authentication.getPrincipal()?.getUsername()}"></span>
+               		<a href="/users/logout">로그아웃</a>
+				</div>
+        	</div>
+        </section> 
+        <section class="notice">
+                <h2>회원 기능</h2>
+                <h5>날씨</h5>
+                <h5>관리자 메세지 </h5>
+                <h5>문의내역 답변 </h5>
+                <h5>&ast; 자유게시판 게시글: </h5>
+                <h5>&ast; 골드게시판 게시글: </h5>
+		</section>
+      
+</div>
+    
+</body>
+</th:block>
+</html>
