@@ -3,7 +3,6 @@ const initTime = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 const renderCalender = (callback) => {
 	const viewYear = date.getFullYear();
 	const viewMonth = date.getMonth();
-//	const viewDate = date.getDate();
 	document.querySelector('.calender_title').textContent = `${viewYear}. ${viewMonth + 1}`;
 	const previousMonth = new Date(viewYear, viewMonth, 0);
 	const currentMonth = new Date(viewYear, viewMonth+1, 0);
@@ -19,17 +18,12 @@ const renderCalender = (callback) => {
 	const prevMonthDates = [];
 	const nextMonthDates = [];
 
-	// 1) 달력 출력
-	// 1-1)지난달 날짜 표시
-	// 지난달 마지막 날짜로 부터 마지막날 요일 인덱스 만큼 반복해서 빼야 달력에 지난달 날짜 표시 가능
-	// ex) 지난달 1월 31일 수요일 : lastDay = 3 -> 31-3 28, 29, 30, 31
 	if(prevMonthLastDay !== 6) {
 		for(let i = 0; i <= prevMonthLastDay; i++){
 			prevMonthDates.unshift(prevMonthLastDate - i);
 		}
 	}
-	// 1-2)다음달 날짜 표시
-	// ex) 이번달 2월 29일 목요일 : 4 금 토 , 반복 횟수 6 - 4 다음달 배열에 += i
+
 	for(let i = 1; i < 7 - curMonthLastDay; i ++) {
 		nextMonthDates.push(i);
 	}
@@ -43,9 +37,15 @@ const renderCalender = (callback) => {
 	formattedDates.forEach((date, i) => {
 		const condition = i >= firstDateIndex && i < lastDateIndex + 1 ? 'this' : 'other';
 		const today = date === nDate.getDate() && viewMonth === nDate.getMonth() && viewYear === nDate.getFullYear();
-		let defaultSelected = today ? 'selected' :  '';
-		let todayLabel = today ? '오늘' :  '';
-		let todayClass = today ? 'today' :  '';
+		let defaultSelected =  '';
+		let todayLabel =  '';
+		let todayClass = '';
+		
+		if (today && condition === 'this') {
+			defaultSelected = 'selected';
+			todayLabel = '오늘';
+			todayClass = 'today'
+		}
 		
 		formattedDates[i] = `<button type="button" class="date ${defaultSelected} ${todayClass}">
 								<span class="sp ${condition}">${date}</span>
@@ -151,14 +151,6 @@ function addClickEvent(btns) {
                 otherBtn.classList.remove('selected');
             });
             btn.classList.add('selected');
-           
-//            if(btns === countBtns) {
-//				selectedCountBtn = true;
-//				localStorage.setItem("countBtnValue", btn.innerText);
-//			} else if(btns === timeBtns){
-//				selectedTimeBtn = true;
-//				localStorage.setItem("timeBtnValue", btn.innerText);
-//			}
             if(selectedTimeBtn && selectedTimeBtn)footerBtn.removeAttribute('disabled');
 		})
 	});
