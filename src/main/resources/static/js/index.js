@@ -3,7 +3,8 @@ const initTime = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 const renderCalender = (callback) => {
 	const viewYear = date.getFullYear();
 	const viewMonth = date.getMonth();
-	document.querySelector('.calender_title').textContent = `${viewYear}. ${viewMonth + 1}`;
+	document.querySelector('.title').textContent = `${viewYear}. ${viewMonth + 1}`;
+	document.querySelector('.cal').textContent = `${viewMonth + 1}.(일).(요일) 시간을 선택해 주세요`;
 	const previousMonth = new Date(viewYear, viewMonth, 0);
 	const currentMonth = new Date(viewYear, viewMonth+1, 0);
 	
@@ -27,19 +28,19 @@ const renderCalender = (callback) => {
 	for(let i = 1; i < 7 - curMonthLastDay; i ++) {
 		nextMonthDates.push(i);
 	}
-
+let nDate = new Date();
 	const formattedDates = prevMonthDates.concat(currentMonthDates, nextMonthDates);
-	const firstDateIndex = formattedDates.indexOf(1);
-	const lastDateIndex = formattedDates.lastIndexOf(curMonthLastDate);
-	
-	let nDate = new Date();
-	
+	const todayIndex = formattedDates.indexOf(nDate.getDate());
 	formattedDates.forEach((date, i) => {
-		const condition = i >= firstDateIndex && i < lastDateIndex + 1 ? 'this' : 'other';
 		const today = date === nDate.getDate() && viewMonth === nDate.getMonth() && viewYear === nDate.getFullYear();
-		let defaultSelected =  '';
+		let defaultSelected = 'unselectable';
 		let todayLabel =  '';
 		let todayClass = '';
+
+		let condition = viewMonth >= nDate.getMonth() ? 'this' : 'other';
+		if ( viewMonth === nDate.getMonth() && i < todayIndex) {
+			condition = 'other';
+		}		
 		
 		if (today && condition === 'this') {
 			defaultSelected = 'selected';
@@ -49,10 +50,24 @@ const renderCalender = (callback) => {
 		
 		formattedDates[i] = `<button type="button" class="date ${defaultSelected} ${todayClass}">
 								<span class="sp ${condition}">${date}</span>
-								<span class="sp text">${todayLabel}</span>
+								<span class="sp text"></span>
 							</button>`;
+		
 	});
 	document.querySelector('.dates').innerHTML = formattedDates.join('');
+
+	const otherBtn = document.querySelectorAll('.other');
+	otherBtn.forEach(e => {
+		e.parentNode.disabled = true;
+	})
+	
+	const btn = document.querySelectorAll('.date');
+	btn.forEach(e => {
+		if (e.classList.contains('today')) {
+			e.querySelector('span.text').textContent = `오늘`;
+		}
+	})
+	
 	let isToday = true;
 	callback(initTime, isToday, addClickEvent);
 }
@@ -65,7 +80,6 @@ function calenderBtn(event) {
 	const btnText = btn.innerText;
 	switch(btnText){
 		case '<': date.setMonth(date.getMonth() - 1);   break;
-//		case 'Today': date = new Date(); 				break;
 		case '>': date.setMonth(date.getMonth() + 1); 	break;
 	}
 	const currDate = new Date();
@@ -76,14 +90,13 @@ function calenderBtn(event) {
 	}
 	renderCalender(()=> createTimeBtns(initTime, isToday, addClickEvent));
 }
-
 // 달력 날짜 선택
 function clickDate(callback) {
 	const dates = document.querySelector('.dates');
-	dates.addEventListener('click', (e) => {
+	dates.addEventListener('click', e => {
 		if(e.target.classList.contains('date')){
-			const activeDates = document.querySelectorAll('.selected');
-	        activeDates.forEach((date) => {
+			const activeDates = document.querySelectorAll('.date.selected');
+			activeDates.forEach((date) => {
 	            date.classList.remove('selected');
 	        });
 			e.target.classList.add('selected');
@@ -139,7 +152,6 @@ function createTimeBtns(initTime, isToday, addClickEventCallback) {
 
 // =================================================================================================
 const countBtns = document.querySelectorAll('.count_btn');
-
 const footerBtn = document.querySelector('.footer_btn');
 //let selectedCountBtn = false;
 let selectedTimeBtn = false;
@@ -155,6 +167,7 @@ function addClickEvent(btns) {
 		})
 	});
 }
+
 addClickEvent(countBtns);
 //addClickEvent(timeBtns);	
 
@@ -166,47 +179,45 @@ function nextPage() {
 }
 
 // ==============================
-const optionDropdown = document.getElementById('options-dropdown');
+
+// const optionDropdown = document.getElementById('options-dropdown');
 const optionBox = document.getElementById('option-box');
 let selectOptValue = null;
 let countValue = 1;
-let optPrice = 3000;
-function addOption(optValue){
+
+const formatter = new Intl.NumberFormat('kr', {
+	style: 'currency',
+	currency: 'krw'
+})
+
+// 옵션 추가
+function addOption(optValue) {
+	let optPrice = 3000;
 	// 옵션 중복 체크
 	if(selectOptValue === optValue){
 		alert('이미 선택 되어 있는 옵션입니다.');
 		return;
 	}
+	
 	const newBox = document.createElement('div');
 	newBox.className = 'opt-detail-box';
 	newBox.innerHTML = `<ul class="opt-ul">
 							<li class="opt-li">
 								<em>풋살화, ${optValue}</em>
 								<div class="opt-count-box">
-									<a class="opt-a" onclick="countBtn(this)">-</a>
+									<a class="opt-a" onclick="countOption(this)">-</a>
 									<input class="opt-input" type="text" value=${countValue}>
-									<a class="opt-a" onclick="countBtn(this)">+</a>
+									<a class="opt-a" onclick="countOption(this)">+</a>
 								</div>
 								<strong class="opt-strong">
-									<span class="opt-price">${optPrice}</span>
-									<span>원</span>
+									<span class="opt-price" data-value="${optPrice}">${optPrice}</span>
 								</strong>
 								<button id="removeBtn" onclick="removeBox(this)">x</button>
 							<li>
 						</ul>`;
 	selectOptValue = optValue;							
-	optionBox.appendChild(newBox);						
-	
+	optionBox.appendChild(newBox);
 }
-
-// 옵션 선택
-optionDropdown.addEventListener('change', function() {
-	const optValue = optionDropdown.value;
-	addOption(optValue);
-	// 셀렉트 옵션 초기화
-	optionDropdown.selectedIndex = 0;
-	calculateTotalPrice();
-}) 
 
 // 옵션 삭제
 function removeBox(removeBtn){
@@ -214,58 +225,81 @@ function removeBox(removeBtn){
 	box.remove();
 }
 
-// 옵션 수량 조절
-function countBtn(countBtn) {
+// 4. 옵션 선택
+// async function selectOption() {
+	const optionDropdown = document.getElementById('options-dropdown');
+	optionDropdown.addEventListener('change', () => {
+		const optValue = optionDropdown.value;
+		addOption(optValue);
+		// 셀렉트 옵션 초기화
+		optionDropdown.selectedIndex = 0;
+		calculateTotalPrice();
+	})
+// }
+let pricePerHour;
+// 1. 시간당 계산
+function timeRadioCheck() {
+	const defaultChecked = document.querySelector('input[name="flexRadioDefault"]:checked');
+	pricePerHour = defaultChecked.value * 50000;
+	formatter.format(pricePerHour);
+	calculateTotalPrice();
+	
+	const radioBtn = document.querySelectorAll('.form-check-input');
+	radioBtn.forEach((rbtn) => {
+		rbtn.addEventListener('change', event => {
+			console.log("pricePerHour===== " + pricePerHour)
+			pricePerHour = event.target.value * 50000;
+			calculateTotalPrice();
+		})
+	})
+
+	
+}
+timeRadioCheck();
+
+// 2. 옵션 수량 조절
+function countOption(countBtn) {
 	const box = countBtn.closest('.opt-detail-box');
 	const input = box.querySelector('.opt-input');
 	const priceElement = box.querySelector('.opt-price');
 	let countValue = parseInt(input.value);
-
 	if(countValue === 1 && countBtn.innerHTML === '-') {
 		alert('더 이상 줄일 수 없습니다.');
 	} else {
 		countValue = countBtn.innerHTML === '+' ? countValue + 1 : Math.max(countValue -1, 1);
 		updatePrice(priceElement, countValue);
-		calculateTotalPrice();
 	}
-	
+	calculateTotalPrice();
 	input.value = countValue;
 }
 
-// 옵션 비용 계산
+// 3. 옵션 비용 계산
 function updatePrice(priceElement, countValue) {
-	const updateOptPrice =  3000 * countValue;
+	let updateOptPrice = 3000 * countValue;
+	// 포맷팅
+	// priceElement.textContent = formatter.format(updateOptPrice);
+	// console.log("updateOptPrice 에서 " + updateOptPrice)
+	// 이 값이 총 비용 계산으로 넘어가야함 or textContent 받아와서 + 시키기 
 	priceElement.textContent = updateOptPrice;
 	return updateOptPrice;
 }
 
-let pricePerHour;
-// 총 비용 계산
+
+// 총 비용 계산 후 출력
 function calculateTotalPrice() {
 	let totalPrice = 0;
 	const optDetailBoxes = document.querySelectorAll('.opt-detail-box');
-	
+
 	optDetailBoxes.forEach((box) => {
 		const priceElement = box.querySelector('.opt-price');
-		const optPrice = parseInt(priceElement.textContent);
-		totalPrice += optPrice;
+		// let optPrice = priceElement.dataset.value;
+		let optPrice = priceElement.textContent;
+		let parseOptPrice = parseInt(optPrice);
+		totalPrice += parseOptPrice;
 	});
+	
 	totalPrice += pricePerHour;
-	document.querySelector('.total-price').innerHTML = totalPrice;
+	document.querySelector('.total-price').innerHTML = formatter.format(totalPrice);
 }
 
-// 시간당 계산
-function timeRadioCheck() {
-	const defaultChecked = document.querySelector('input[name="flexRadioDefault"]:checked');
-	pricePerHour = defaultChecked.value * 50000;
-	calculateTotalPrice();
-	
-	const radioBtn = document.querySelectorAll('.form-check-input');
-	radioBtn.forEach((rbtn) => {
-		rbtn.addEventListener('change', function() {
-			pricePerHour  = this.value * 50000;
-			calculateTotalPrice();
-		})
-	})
-}
-timeRadioCheck();
+
