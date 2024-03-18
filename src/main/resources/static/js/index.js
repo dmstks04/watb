@@ -49,7 +49,7 @@ let nDate = new Date();
 		}
 		
 		formattedDates[i] = `<button type="button" class="date ${defaultSelected} ${todayClass}">
-								<span class="sp ${condition}">${date}</span>
+								<span class="sp num ${condition}">${date}</span>
 								<span class="sp text"></span>
 							</button>`;
 		
@@ -180,7 +180,6 @@ function nextPage() {
 
 // ==============================
 
-// const optionDropdown = document.getElementById('options-dropdown');
 const optionBox = document.getElementById('option-box');
 let selectOptValue = null;
 let countValue = 1;
@@ -190,116 +189,111 @@ const formatter = new Intl.NumberFormat('kr', {
 	currency: 'krw'
 })
 
-// 옵션 추가
-function addOption(optValue) {
-	let optPrice = 3000;
-	// 옵션 중복 체크
-	if(selectOptValue === optValue){
-		alert('이미 선택 되어 있는 옵션입니다.');
-		return;
-	}
+window.addEventListener('load', () => {
+	calculatePrice();
+});
+
+const radioBtn = document.querySelectorAll('input[name="flexRadioDefault"]');
+radioBtn.forEach(e => {
+	e.addEventListener('change', () => {
+		// 계산 실행 함수
+		calculatePrice()
+	})
+})
+
+function calculatePrice() {
+	const optionPrice = optionPrices.reduce((acc, price) => acc + price, 0);
+	const hourBtn = document.querySelector('input[name="flexRadioDefault"]:checked');
+	hourlyPrice = hourBtn.value * 50000;
 	
-	const newBox = document.createElement('div');
-	newBox.className = 'opt-detail-box';
-	newBox.innerHTML = `<ul class="opt-ul">
-							<li class="opt-li">
-								<em>풋살화, ${optValue}</em>
-								<div class="opt-count-box">
-									<a class="opt-a" onclick="countOption(this)">-</a>
-									<input class="opt-input" type="text" value=${countValue}>
-									<a class="opt-a" onclick="countOption(this)">+</a>
-								</div>
-								<strong class="opt-strong">
-									<span class="opt-price" data-value="${optPrice}">${optPrice}</span>
-								</strong>
-								<button id="removeBtn" onclick="removeBox(this)">x</button>
-							<li>
-						</ul>`;
-	selectOptValue = optValue;							
-	optionBox.appendChild(newBox);
+	const totalPrice = optionPrice + hourlyPrice;
+	document.querySelector('.total-price').innerHTML =`${totalPrice}원`;
 }
 
-// 옵션 삭제
-function removeBox(removeBtn){
-	const box = removeBtn.closest('.opt-detail-box');
-	box.remove();
-}
-
-// 4. 옵션 선택
-// async function selectOption() {
+let optionPrices = [];
+function selectOption() {
 	const optionDropdown = document.getElementById('options-dropdown');
 	optionDropdown.addEventListener('change', () => {
 		const optValue = optionDropdown.value;
-		addOption(optValue);
-		// 셀렉트 옵션 초기화
+		if (selectOptValue != optValue) {
+			addOption();
+			countOption();
+		} else {
+			alert('이미 선택 되어 있는 옵션입니다.');
+			return;
+		}
+		
 		optionDropdown.selectedIndex = 0;
-		calculateTotalPrice();
-	})
-// }
-let pricePerHour;
-// 1. 시간당 계산
-function timeRadioCheck() {
-	const defaultChecked = document.querySelector('input[name="flexRadioDefault"]:checked');
-	pricePerHour = defaultChecked.value * 50000;
-	formatter.format(pricePerHour);
-	calculateTotalPrice();
-	
-	const radioBtn = document.querySelectorAll('.form-check-input');
-	radioBtn.forEach((rbtn) => {
-		rbtn.addEventListener('change', event => {
-			console.log("pricePerHour===== " + pricePerHour)
-			pricePerHour = event.target.value * 50000;
-			calculateTotalPrice();
-		})
-	})
-
-	
-}
-timeRadioCheck();
-
-// 2. 옵션 수량 조절
-function countOption(countBtn) {
-	const box = countBtn.closest('.opt-detail-box');
-	const input = box.querySelector('.opt-input');
-	const priceElement = box.querySelector('.opt-price');
-	let countValue = parseInt(input.value);
-	if(countValue === 1 && countBtn.innerHTML === '-') {
-		alert('더 이상 줄일 수 없습니다.');
-	} else {
-		countValue = countBtn.innerHTML === '+' ? countValue + 1 : Math.max(countValue -1, 1);
-		updatePrice(priceElement, countValue);
-	}
-	calculateTotalPrice();
-	input.value = countValue;
-}
-
-// 3. 옵션 비용 계산
-function updatePrice(priceElement, countValue) {
-	let updateOptPrice = 3000 * countValue;
-	// 포맷팅
-	// priceElement.textContent = formatter.format(updateOptPrice);
-	// console.log("updateOptPrice 에서 " + updateOptPrice)
-	// 이 값이 총 비용 계산으로 넘어가야함 or textContent 받아와서 + 시키기 
-	priceElement.textContent = updateOptPrice;
-	return updateOptPrice;
-}
-
-
-// 총 비용 계산 후 출력
-function calculateTotalPrice() {
-	let totalPrice = 0;
-	const optDetailBoxes = document.querySelectorAll('.opt-detail-box');
-
-	optDetailBoxes.forEach((box) => {
-		const priceElement = box.querySelector('.opt-price');
-		// let optPrice = priceElement.dataset.value;
-		let optPrice = priceElement.textContent;
-		let parseOptPrice = parseInt(optPrice);
-		totalPrice += parseOptPrice;
 	});
-	
-	totalPrice += pricePerHour;
-	document.querySelector('.total-price').innerHTML = formatter.format(totalPrice);
+}
+selectOption();
+
+const optionDropdown = document.getElementById('options-dropdown');
+
+let optPrice = 3000;
+function addOption() {
+	const optValue = optionDropdown.value;
+	const newBox = document.createElement('div');
+	newBox.className = 'opt-detail-box';
+	newBox.innerHTML = `<ul class="opt-ul">
+						<li class="opt-li">
+							<em>풋살화, ${optValue}</em>
+							<div class="opt-count-box">
+								<a class="opt-a" data-value="-">-</a>
+								<input class="opt-input" type="text" value=${countValue}>
+								<a class="opt-a" data-value="+">+</a>
+							</div>
+							<strong class="opt-strong">
+								<span class="opt-price">${optPrice}</span>
+							</strong>
+							<button id="removeBtn" onclick="removeBox(this)">x</button>
+						<li>
+					</ul>`;
+	selectOptValue = optValue;
+	optionBox.appendChild(newBox);
+	optionPrices.push(optPrice);
+		
+	calculatePrice();
 }
 
+function countOption() {
+	let optPriceTotal = 0;
+	const countBtn = document.querySelectorAll('.opt-a');
+	countBtn.forEach(e => {
+		e.addEventListener('click', () => {
+			// 옵션이 여러개 일 때 countValue가 중첩되는 거 수정해야함
+			console.log('forEach 반복')
+			const boxHtml = e.dataset.value;
+			const box = e.closest('.opt-detail-box');
+			const input = box.querySelector('.opt-input');
+			const priceElement = box.querySelector('.opt-price');
+						
+			let countValue = parseInt(input.value);
+			if (!(countValue === 1 && boxHtml === '-')) {
+				countValue = boxHtml === '+' ? countValue + 1 : Math.max(countValue - 1, 1);
+				optPriceTotal = 3000 * countValue;
+					
+			} else {
+				optionDropdown.selectedIndex = 0;
+				alert('더 이상 줄일 수 없습니다.');
+			}
+			priceElement.textContent = optPriceTotal;
+			input.value = countValue;
+			const index = Array.from(box.parentNode.children).indexOf(box);
+			
+			optionPrices[index] = optPriceTotal;
+			console.log(optionPrices);
 
+			calculatePrice();
+		});
+			
+	});
+}
+
+function removeBox(btn) {
+	const box = btn.closest('.opt-detail-box');
+	const index = Array.from(box.parentNode.children).indexOf(box);
+	box.remove();
+	optionPrices.splice(index, 1);
+	calculatePrice();
+}
