@@ -211,24 +211,23 @@ function calculatePrice() {
 }
 
 let optionPrices = [];
+let optionDropdown = document.getElementById('options-dropdown');
+
+
 function selectOption() {
-	const optionDropdown = document.getElementById('options-dropdown');
+	optionDropdown = document.getElementById('options-dropdown');
 	optionDropdown.addEventListener('change', () => {
 		const optValue = optionDropdown.value;
 		if (selectOptValue != optValue) {
 			addOption();
-			countOption();
 		} else {
 			alert('이미 선택 되어 있는 옵션입니다.');
 			return;
 		}
-		
 		optionDropdown.selectedIndex = 0;
 	});
 }
 selectOption();
-
-const optionDropdown = document.getElementById('options-dropdown');
 
 let optPrice = 3000;
 function addOption() {
@@ -239,9 +238,9 @@ function addOption() {
 						<li class="opt-li">
 							<em>풋살화, ${optValue}</em>
 							<div class="opt-count-box">
-								<a class="opt-a" data-value="-">-</a>
+								<a class="opt-a" data-value="-" onclick="countOption(this)">-</a>
 								<input class="opt-input" type="text" value=${countValue}>
-								<a class="opt-a" data-value="+">+</a>
+								<a class="opt-a" data-value="+" onclick="countOption(this)">+</a>
 							</div>
 							<strong class="opt-strong">
 								<span class="opt-price">${optPrice}</span>
@@ -252,42 +251,34 @@ function addOption() {
 	selectOptValue = optValue;
 	optionBox.appendChild(newBox);
 	optionPrices.push(optPrice);
-		
 	calculatePrice();
 }
 
-function countOption() {
-	let optPriceTotal = 0;
-	const countBtn = document.querySelectorAll('.opt-a');
-	countBtn.forEach(e => {
-		e.addEventListener('click', () => {
-			// 옵션이 여러개 일 때 countValue가 중첩되는 거 수정해야함
-			console.log('forEach 반복')
-			const boxHtml = e.dataset.value;
-			const box = e.closest('.opt-detail-box');
-			const input = box.querySelector('.opt-input');
-			const priceElement = box.querySelector('.opt-price');
-						
-			let countValue = parseInt(input.value);
-			if (!(countValue === 1 && boxHtml === '-')) {
-				countValue = boxHtml === '+' ? countValue + 1 : Math.max(countValue - 1, 1);
-				optPriceTotal = 3000 * countValue;
-					
-			} else {
-				optionDropdown.selectedIndex = 0;
-				alert('더 이상 줄일 수 없습니다.');
-			}
-			priceElement.textContent = optPriceTotal;
-			input.value = countValue;
-			const index = Array.from(box.parentNode.children).indexOf(box);
-			
-			optionPrices[index] = optPriceTotal;
-			console.log(optionPrices);
+let countOptionAdded = false;
 
-			calculatePrice();
-		});
-			
-	});
+function countOption(btn) {
+	const boxHtml = btn.innerHTML;
+	const box = btn.closest('.opt-detail-box');
+	const input = box.querySelector('.opt-input');
+	const priceElement = box.querySelector('.opt-price');
+	let countValue = parseInt(input.value);
+
+	if (!(countValue === 1 && boxHtml === '-')) {
+		countValue = boxHtml === '+' ? countValue + 1 : Math.max(countValue - 1, 1);
+		optPriceTotal = 3000 * countValue;
+		
+	} else {
+		optionDropdown.selectedIndex = 0;
+		alert('더 이상 줄일 수 없습니다.');
+	}
+	priceElement.textContent = optPriceTotal;
+	input.value = countValue;
+	const index = Array.from(box.parentNode.children).indexOf(box);
+
+	optionPrices[index] = optPriceTotal;
+	console.log(optionPrices);
+
+	calculatePrice();
 }
 
 function removeBox(btn) {
