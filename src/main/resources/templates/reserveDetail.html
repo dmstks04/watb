@@ -1,110 +1,171 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default_layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout/default_layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-<title>왓비</title>
-<meta charset="UTF-8">
+	<title>왓비</title>
+	<meta charset="UTF-8">
+
 </head>
 <th:block layout:fragment="content">
-<script src="https://code.jquery.com/jquery-latest.min.js"></script>
-<style>
-body{
-	height: 100vh;
-	width: 100vw;
-}
-.container{
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-auto-rows: 2fr 2fr 1fr;
-	padding: 10px;
-	grid-row-gap: 10px;
-}
-.main {
-	display: flex;
-	justify-content: center;
-}	
-section {
-	border: 1px solid black;
-}
-.payment_btn{
-	width: 380px;
-	height: 50px;
-	background-color: #3540A5;
-	color: #fff;
-	border-radius: 7px;
-	border: 1px solid #3450A5;
-}
-.footer_payment_area {
-	display: flex;
-	justify-content: space-around;
-}
-.backBtn {
-	width: 150px;
-	height: 50px;
-	border-radius: 7px;
-	border: 1px solid #6c757d;
-}
-</style>
+	<!-- 포트원 결제 -->
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+	<!-- iamport.payment.js -->
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+	<style>
+		body {
+			height: 100vh;
+			width: 100vw;
+		}
 
-<body>
-<script>
-// 페이지 로딩 시 실행되는 코드
-	document.addEventListener('DOMContentLoaded', function () {
-    // 로컬 스토리지에서 값 가져오기
-    var countBtnValue = localStorage.getItem("countBtnValue");
-    var timeBtnValue = localStorage.getItem("timeBtnValue");
-	let timetest = document.getElementById('time_test');
-	count.innerText = countBtnValue;
-    // 가져온 값 사용 예시 (여기서는 alert으로 표시)
-    
-});
-</script>
-<div class="container">
-	<section class="section_inner">
-		<p>예약 내용을 확인해주세요.</p>
-		<div class="reserve_area">
-			<div id="date_test">
-			</div>
-			<div id="time_test">
-			</div>
-			날짜 시간 예약시간 인원수 대여물품
+		.main {
+			max-width: 720px;
+			margin: 0 auto;
+		}
+
+		.section_info,
+		.section_user {
+			max-width: 720px;
+			margin-top: 50px;
+		}
+
+		.payment_btn {
+			width: 380px;
+			height: 50px;
+			background-color: #3540A5;
+			color: #fff;
+			border-radius: 7px;
+			border: 1px solid #3450A5;
+		}
+
+		.footer_payment_area {
+			display: flex;
+			justify-content: space-around;
+		}
+
+		.back_btn {
+			width: 150px;
+			height: 50px;
+			border-radius: 7px;
+			border: 1px solid #6c757d;
+		}
+
+		.card_info_item {
+			display: flex;
+		}
+
+		.card_info_list .title {
+			margin-right: 8px;
+			width: 70px;
+			font-size: 15px;
+			line-height: 20px;
+		}
+
+		.card_inner {
+			border: 1px solid black;
+			position: relative;
+			padding: 18px 20px;
+		}
+
+
+
+		.input-container {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.input-group {
+			display: flex;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.input-group label {
+			margin-right: 10px;
+			width: 100px;
+		}
+
+		.input-group input,
+		.input-group textarea {
+			flex: 1;
+			border: 1px solid #d9d9dc;
+			border-radius: 10px;
+			/* 남은 공간을 모두 차지 */
+		}
+	</style>
+
+	<body>
+		<script>
+
+		</script>
+		<div class="main">
+			<section class="section_info">
+				<p>아래 내용이 맞는지 확인해주세요.</p>
+				<div class="section_inner">
+					<div class="card_inner">
+						<ul class="card_info_list">
+							<li class="card_info_item">
+								<div class="title">일정</div>
+								<div class="date_info"></div></span>
+							</li>
+							<li class="card_info_item">
+								<div class="title">인원</div>
+								<div class="count_info"></div>
+							</li>
+							<li class="card_info_item">
+								<div class="title">대여</div>
+								<div class="option_info"></div>
+							</li>
+							<li class="card_info_item">
+								<div class="title">결제 금액</div>
+								<div class="price_info"></div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+			<section class="section_user">
+				<h5 class="section_title">예약자 정보</h5>
+				<div class="section_inner">
+					<div class="input-container">
+						<div class="input-group">
+							<label for="input1">예약자</label>
+							<input type="text" name="name" id="name"
+								th:value="${#authentication.getPrincipal()?.getNickname()}" maxlength="40"
+								aria-required="true" placeholder="예약자 이름을 입력해주세요." readonly>
+						</div>
+						<div class="input-group">
+							<label for="input2">연락처(필수)</label>
+							<input type="text" id="input2" name="input2" readonly>
+						</div>
+						<div class="input-group">
+							<label for="input3">이메일</label>
+							<input type="email" th:value="${#authentication.getPrincipal()?.getUsername}" readonly>
+						</div>
+						<div class="input-group">
+							<label>요청사항</label>
+							<textarea cols="30" rows="3" maxlength="500" placeholder="요청하실 내용을 적어주세요."></textarea>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="section_footer" style="margin: 30px 30px">
+				<div class="footer_payment_area">
+					<button class="back_btn">이전</button>
+					<button id="sendButton">Send Data</button>
+					<button class="payment_btn">결제하기</button>
+				</div>
+			</section>
 		</div>
-		
-		<div>이름 아이디</div>
-	</section>
-	<section class="section_notice">
-		<h5 class="section_title">예약자 정보</h5>
-		<div class="section_inner">
-			<div>
-				<label>예약자(필수)</lebel>
-				<input type="text" readonly>
-<!--				<input type="text" value="${authentication.getPrincipal().getUsername()}" readonly>-->
-			</div>
-			<div>
-				<label>연락처(필수)</lebel>
-				<input type="tel" readonly>
-			</div>
-			<div>
-				<label>이메일</lebel>
-				<input type="email">
-			</div>
-			<div>
-				<label>연락처(필수)</lebel>
-				<input type="text">
-			</div>
-		</div>
-	</section>
-	<section class="section_footer" style="margin-top: 30px">
-		<div class="footer_payment_area">
-			<button class="backBtn" onlick="window.history.back()">이전</button>
-			<form>
-				<button class="payment_btn">카카오 결제</buttom>
-			</form>
-		</div>
-	</section>
-</div>
-<script src="/js/index.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>	</body>
-</body>
+		<script src="/js/detail.js"></script>
+		<script src="/js/payment.js"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+			crossorigin="anonymous"></script>
+	</body>
 </th:block>
+
 </html>
