@@ -1,6 +1,6 @@
 let date = new Date();
 const initTime = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-const renderCalender = (createTimeBtns) => {
+const renderCalender = () => {
 	const viewYear = date.getFullYear();
 	const viewMonth = date.getMonth();
 	document.querySelector('.title_year').textContent = `${viewYear}.`;
@@ -31,39 +31,36 @@ const renderCalender = (createTimeBtns) => {
 	}
 	let nDate = new Date();
 	const formattedDates = prevMonthDates.concat(currentMonthDates, nextMonthDates);
-	// const todayIndex = formattedDates.indexOf(nDate.getDate());
-	const todayIndex = formattedDates.reduce((acc, num, index) => {
-		if (num == nDate.getDate()) {
-			acc.push(index);
-		}
-		return acc;
+	
+	todayNum = currentMonthDates.reduce((acc, num, index) => {
+			if (num == (nDate.getDate())) {
+				acc.push(num);
+			}
+			return acc;
 	}, []);
-	formattedDates.forEach((date, i) => {
-		const today = date === nDate.getDate() && viewMonth === nDate.getMonth() && viewYear === nDate.getFullYear();
-		let defaultSelected = 'unselectable';
-		let todayClass = '';
 
-		let condition = viewMonth >= nDate.getMonth() ? 'this' : 'other';
-		if ( viewMonth === nDate.getMonth() && i < todayIndex[1]) {
-			condition = 'other';
-		}		
-		if (today && condition === 'this') {
-			defaultSelected = 'selected';
-			todayLabel = '오늘';
-			todayClass = 'today'
+	formattedDates.forEach((date, i) => {
+		let condition = 'unselectable';
+		let todayClass = '';
+		if (viewMonth === nDate.getMonth()) {
+			if (!((i < todayNum) || (i-1 > currentMonthDates.length + prevMonthDates.length))) {
+				condition = '';
+			}
+			if (i == todayNum) {
+				todayClass = 'today';
+			}
 		}
-		
-		formattedDates[i] = `<button type="button" class="date ${defaultSelected} ${todayClass}">
-								<span class="sp num ${condition}">${date}</span>
+		formattedDates[i] = `<button type="button" class="date${condition ? ` ${condition}` : ''}${todayClass ? ` ${todayClass}` : ''} ">
+								<span class="sp num">${date}</span>
 								<span class="sp text"></span>
 							</button>`;
 		
 	});
 	document.querySelector('.dates').innerHTML = formattedDates.join('');
-
-	const otherBtn = document.querySelectorAll('.other');
+	
+	const otherBtn = document.querySelectorAll('.date.unselectable');
 	otherBtn.forEach(e => {
-		e.parentNode.disabled = true;
+		e.disabled = true;
 	})
 	
 	const btn = document.querySelectorAll('.date');
@@ -76,23 +73,21 @@ const renderCalender = (createTimeBtns) => {
 	let isToday = false;
 	createTimeBtns(initTime, isToday);
 }
-renderCalender(createTimeBtns);
+renderCalender();
 
 
 // 달력 버튼
 function calenderBtn(event) {
-	const btn= event.target;
-	const btnText = btn.innerText;
-	switch(btnText){
-		case '<': date.setMonth(date.getMonth() - 1);   break;
-		case '>': date.setMonth(date.getMonth() + 1); 	break;
+	const btnClass = event.target;
+	if (btnClass.classList.contains('go-prev')) {
+		date.setMonth(date.getMonth() - 1);
+	} else if(btnClass.classList.contains('go-next')){
+		date.setMonth(date.getMonth() + 1);
 	}
+
 	const currDate = new Date();
 	isToday = false;
-	// 현재 달로 돌아왔을 때 시간 필터링 적용
-	if(date.getMonth() === currDate.getMonth()){
-		isToday = true;
-	}
+	
 	renderCalender(()=> createTimeBtns(initTime, isToday));
 }
 
@@ -127,7 +122,7 @@ function createTimeBtns(initTime, isToday) {
 	
 	let currentHourIndex = initTime.indexOf(currentHour) + 1;
 	isToday ? (currentHourIndex = initTime.indexOf(currentHour) + 1) : (currentHourIndex = 0);
- 	initTime.slice(currentHourIndex).forEach((time, index) => {
+	initTime.slice(currentHourIndex).forEach((time, index) => {
 		if(index % 4 === 0){
 			ulElement = createUlElement();
 			timeSlot.appendChild(ulElement);
