@@ -55,7 +55,8 @@ public class ReserveController {
 	public String createReservation(@RequestBody Map<String, Object> sendData, Authentication auth,
 			@ModelAttribute ReservationRequest request) {
 		System.out.println(auth.getName());
-		String usageTime = (String) sendData.get("reservationTime"); // 이용 시간
+		String usageTime = (String) sendData.get("usageTime"); // 이용 시간
+		String reservationTime = (String) sendData.get("reservationTime"); // 이용 시간
 		String guestCount = (String) sendData.get("guestCount"); // 인원수
 		String price = String.valueOf(sendData.get("price")); // 가격
 
@@ -63,8 +64,8 @@ public class ReserveController {
 		int month = Integer.parseInt(sendData.get("reservationMonth").toString());
 		int day = Integer.parseInt(sendData.get("reservationDate").toString());
 		LocalDate date = LocalDate.of(year, month, day);
-
 		request.setReservationDate(date);
+		request.setReservationTime(reservationTime);
 		request.setUsageTime(usageTime);
 		request.setGuestCount(guestCount);
 		request.setPrice(price);

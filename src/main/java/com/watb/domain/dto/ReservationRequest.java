@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationRequest {
     private LocalDate reservationDate; // 예약일
+    private String reservationTime;
     private String usageTime; // 이용 시간
     private String guestCount; // 인원수
     private String price; // 가격
@@ -23,6 +24,7 @@ public class ReservationRequest {
         return Reservation.builder()
                 .user(user)
                 .reservationDate(reservationDate)
+                .reservationTime(reservationTime)
                 .usageTime(usageTime)
                 .guestCount(guestCount)
                 .price(price)

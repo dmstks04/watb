@@ -29,6 +29,7 @@ public class Reservation {
     @JoinColumn(name = "user_id")
     private User user; // 예약자
     private LocalDate reservationDate; // 예약일
+    private String reservationTime; // 예약 시간
     private String usageTime; // 이용 시간
     private String guestCount; // 인원수
     private String price; // 가격
