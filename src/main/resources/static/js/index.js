@@ -1,7 +1,8 @@
 let date = new Date();
 const initTime = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+let viewYear;
 const renderCalender = () => {
-	const viewYear = date.getFullYear();
+	viewYear = date.getFullYear();
 	const viewMonth = date.getMonth();
 	document.querySelector('.title_year').textContent = `${viewYear}.`;
 	document.querySelector('.title_month').textContent = `${viewMonth + 1}`;
@@ -175,7 +176,6 @@ btnArrays.forEach(e => {
 //         selectedTimeBtn = true;
 //     }
 // }
-
 nextBtn.addEventListener('click', () => {
 	const dateValue = document.querySelector('.date.selected');
 	const countValue = document.querySelector('.count_btn.selected');
@@ -183,11 +183,12 @@ nextBtn.addEventListener('click', () => {
 	const month = document.querySelector('.title_month').innerHTML;
 	const hourValue = document.querySelector('input[name="flexRadioDefault"]:checked');
 
-	sessionStorage.setItem('timeBtnValue', JSON.stringify(timeValue.textContent));
-	sessionStorage.setItem('countBtnValue', JSON.stringify(countValue.textContent));
-	sessionStorage.setItem("monthValue", JSON.stringify(month));
-	sessionStorage.setItem("dateValue", JSON.stringify(dateValue.querySelector('span').textContent));
-	sessionStorage.setItem("hourValue", JSON.stringify(hourValue.value));
+	sessionStorage.setItem('reservationYear', JSON.stringify(viewYear));
+	sessionStorage.setItem('guestCount', JSON.stringify(countValue.textContent));
+	sessionStorage.setItem('reservationTime', JSON.stringify(timeValue.textContent));
+	sessionStorage.setItem("reservationMonth", JSON.stringify(month));
+	sessionStorage.setItem("reservationDate", JSON.stringify(dateValue.querySelector('span').textContent));
+	sessionStorage.setItem("usageTime", JSON.stringify(hourValue.value));
 	sessionStorage.setItem("optionInfo", JSON.stringify(optionInfo));
 	
 	window.location.href = "/watb/reserve/detail";
@@ -221,7 +222,7 @@ function calculatePrice() {
 	hourlyPrice = hourBtn.value * 50000;
 	
 	const totalPrice = optionPrice + hourlyPrice;
-	sessionStorage.setItem('totalPrice', totalPrice);
+	sessionStorage.setItem('price', totalPrice);
 	document.querySelector('.total-price').innerHTML =`${totalPrice}원`;
 }
 

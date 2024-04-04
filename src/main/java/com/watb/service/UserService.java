@@ -31,21 +31,15 @@ public class UserService {
 
 	// 로그인
 	public User login(UserLoginRequest request) {
-
 		Optional<User> optionalUser = userRepository.findByLoginId(request.getLoginId());
-
 		if (optionalUser.isEmpty()) {
 			return null;
 		}
-
 		User user = optionalUser.get();
-
 		if (!user.getPassword().equals(request.getPassword())) {
 			return null;
 		}
-
 		return user;
-
 	}
 
 	public BindingResult joinValid(UserJoinRequest req, BindingResult bindingResult) {

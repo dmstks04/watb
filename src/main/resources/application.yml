@@ -20,10 +20,10 @@ spring:
       enabled: 'true'
       poll-interval: '2s'
       quiet-period: '1s'
-      additional-paths:
-        - src/main/java/
+      # additional-paths:
+      #   - src/main/java/
     livereload:
-      enabled: 'true'
+      port: 35730
   thymeleaf:
     cache: 'false'
     prefix: file:src/main/resources/templates/
