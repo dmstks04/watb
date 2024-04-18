@@ -51,9 +51,8 @@ public class PaymentService {
             throw new IOException();
 
         // 2. 결제 내역 저장
-        System.out.println("페이dto: " + paymentsRequest);
         Payments payments = paymentRepository.save(paymentsRequest.toEntity(user, reservation));
-        System.out.println(payments.getId());
+        reservation.setPayments(payments);
     }
 
 }
