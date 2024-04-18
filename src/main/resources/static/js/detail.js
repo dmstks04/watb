@@ -25,21 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
         price: price // 가격
     }
 
-    document.getElementById("sendButton").addEventListener("click", function () {
-        $.ajax({
-            type: 'POST',
-            url: "/watb/postData",
-            data: JSON.stringify(sendData),
-            contentType: "application/json",
-            success: function (rsp) {
-                alert(rsp);
-            },
-            error: function (error) {
-                alert(error);
-            }
-        })
-    });
-    
     const countInfo = document.querySelector('.count_info');
     const dateInfo = document.querySelector('.date_info');
     const option = document.querySelector('.option_info');
@@ -53,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     dateInfo.innerHTML = `${reservationMonth}.${reservationDate}(${formatter.format(date)}) ${reservationTime} ${usageTime}시간`;
     countInfo.innerHTML = `${guestCount}명`;
-    option.innerHTML = Object.entries(optionInfo).length === 0 ? '없음'
-        : optionInfo.map(option => ` ${option.name}. ${option.quantity}개`);
+    // option.innerHTML = Object.entries(optionInfo).length === 0 ? '없음'
+    //     : optionInfo.map(option => ` ${option.name}. ${option.quantity}개`);
     priceInfo.innerHTML = `<strong>${price}원</strong>`;
 });

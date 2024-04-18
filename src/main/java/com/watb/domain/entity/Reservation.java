@@ -28,14 +28,15 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 예약자
+    private String merchantUid; // 주문번호
     private LocalDate reservationDate; // 예약일
     private String reservationTime; // 예약 시간
     private String usageTime; // 이용 시간
     private String guestCount; // 인원수
-    private String price; // 가격
+    private String amount; // 가격
     private LocalDateTime created; // 등록날짜
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id")
-    private Payment payment;
+    @JoinColumn(name = "payments_id")
+    private Payments payments;
 
 }

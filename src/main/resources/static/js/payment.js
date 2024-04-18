@@ -1,54 +1,95 @@
 var IMP = window.IMP;
 IMP.init("imp31164474");
 
-var today = new Date();   
-var hours = today.getHours();
-var minutes = today.getMinutes();  
-var seconds = today.getSeconds();  
-var milliseconds = today.getMilliseconds();
-var makeMerchantUid = hours + minutes + seconds + milliseconds;
+// 예약 정보
+const guestCount = JSON.parse(sessionStorage.getItem("guestCount"));
+const reservationTime = JSON.parse(sessionStorage.getItem("reservationTime"));
+const reservationYear = JSON.parse(sessionStorage.getItem("reservationYear"));
+const reservationMonth = JSON.parse(sessionStorage.getItem("reservationMonth"));
+const reservationDay = JSON.parse(sessionStorage.getItem("reservationDay"));
+const usageTime = JSON.parse(sessionStorage.getItem("usageTime"));
+const optionInfo = JSON.parse(sessionStorage.getItem("optionInfo"));
+const amount = JSON.parse(sessionStorage.getItem("price"));
 
 const paymentBtn = document.querySelector('.payment_btn');
-const onclickPay = async() => {
-    var buyer_name = '';
-    var buyer_email = '';
-    var amount = sessionStorage.getItem("totalPrice");
 
+var today = new Date();
+var year = today.getFullYear() - 2000;
+var years = year.toString(); 
+var hours = today.getHours().toString();
+var minutes = today.getMinutes().toString();
+var seconds = today.getSeconds().toString();
+var milliseconds = today.getMilliseconds().toString();
+var makeMerchantUid = years + hours + minutes + seconds + milliseconds;
+
+const onclickPay = async () => {
     IMP.request_pay({
         pg: "kakaopay",
         pay_method: "card",
-        merchant_uid: "IMP" + makeMerchantUid, // 상점에서 생성한 고유 주문번호
-        name: "주문명:결제테스트",
-        amount: amount, // Integer, string 아님 유의
-        buyer_email: "test@portone.io",
-        buyer_name: "구매자이름",
-        buyer_tel: "010-1234-5678",
-        buyer_addr: "서울특별시 강남구 삼성동",
-        buyer_postcode: "123-456",
-        // notice_url: "https://웹훅수신 URL"
-        // m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}"
-    }), function (rsp) {
+        // makeMerchantUid가 문제, 컨트롤러에서 넘어온 애를 전달 받아야함
+        merchant_uid: `MID${makeMerchantUid}`,
+        name: "예약테스트",
+        amount: parseInt(amount), // String 아님 유의
+        buyer_email: $("#email").val(),
+        buyer_name: $("#name").val()
+    }, function (rsp) {
         if (rsp.success) {
-            //[1] 서버단에서 결제정보 조회를 위해 jQuery ajax로 imp_uid 전달하기
-            jQuery.ajax({
-                url: "/payments/complete", //cross-domain error가 발생하지 않도록 주의해주세요
+            console.log(JSON.stringify(rsp));
+            // 결제 성공 시
+            // 1. 예약 내역 저장
+            merchantUid = rsp.merchant_uid;
+            impUid = rsp.imp_uid;
+            $.ajax({
                 type: 'POST',
-                dataType: 'json',
-                data: {
-                    imp_uid: rsp.imp_uid,           // 결제 고유번호
-                    order_uid: rsp.makeMerchantUid // 주문 번호
-                    //기타 필요한 데이터가 있으면 추가 전달
+                url: `/watb/reserve/${merchantUid}`,
+                data: JSON.stringify({
+                    guestCount: guestCount,             // 인원수
+                    year: reservationYear,   // 년
+                    month: reservationMonth, // 월
+                    day: reservationDay,   // 일
+                    // reservationDate: formattedDate,
+                    reservationTime: reservationTime,   // 시
+                    usageTime: usageTime,               // 이용시간
+                    // optionInfo: optionInfo,             // 대여물품
+                    amount: parseInt(amount),             // 금액
+                    merchantUid: merchantUid,            // 주문번호
+                    // impUid: impUid
+                }),
+                contentType: "application/json",
+                success: function (reserveData) {
+                    console.log("예약 저장 성공");
+                    console.log(reserveData);
+                    console.log(rsp);
+
+                    //결제 검증
+                    $.ajax({
+                        url: "/payment",
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        data: JSON.stringify({
+                            "amount": rsp.paid_amount,
+                            "impUid": rsp.imp_uid,      // 결제 고유번호
+                            "merchantUid": rsp.merchant_uid   // 주문번호
+                        }),
+                        // data: JSON.stringify(data),
+                        success: function (response) {
+                            alert("예약 완료 되었습니다!");
+                            window.location.href = `/watb`;
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    })
+                },
+                error: function (err) {
+                    console.log("에약 저장 실패" + err);
                 }
-            }).done(function () {
-                //[2] 서버에서 REST API로 결제정보확인 및 서비스루틴이 정상적인 경우
-                var msg = '결제가 완료되었습니다.';
-                alert(msg);
-            });
+            })
+
+            
         } else {
-            var msg = '결제에 실패하였습니다.';
-            msg += '에러내용 : ' + rsp.error_msg;
-            alert(msg);
+            alert('결제 실패!');
         }
-    }
+    });
 }
 paymentBtn.addEventListener('click', onclickPay);

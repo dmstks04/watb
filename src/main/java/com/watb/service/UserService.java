@@ -42,6 +42,10 @@ public class UserService {
 		return user;
 	}
 
+	// public User findUser(Long id) {
+	// Optional<User> user = userRepository.findById(id);
+	// return user;
+	// }
 	public BindingResult joinValid(UserJoinRequest req, BindingResult bindingResult) {
 		if (req.getLoginId().isEmpty()) {
 			bindingResult.addError(new FieldError("req", "loginId", "아이디가 비어있습니다."));

@@ -142,11 +142,13 @@
 						</div>
 						<div class="input-group">
 							<label for="input3">이메일</label>
-							<input type="email" th:value="${#authentication.getPrincipal()?.getUsername}" readonly>
+							<input type="email" id="email" th:value="${#authentication.getPrincipal()?.getUsername}"
+								readonly>
 						</div>
 						<div class="input-group">
 							<label>요청사항</label>
 							<textarea cols="30" rows="3" maxlength="500" placeholder="요청하실 내용을 적어주세요."></textarea>
+							<input type="hidden" id="merchantUid" value="${merchantUid}">
 						</div>
 					</div>
 				</div>
@@ -154,7 +156,6 @@
 			<section class="section_footer" style="margin: 30px 30px">
 				<div class="footer_payment_area">
 					<button class="back_btn">이전</button>
-					<button id="sendButton">Send Data</button>
 					<button class="payment_btn">결제하기</button>
 				</div>
 			</section>

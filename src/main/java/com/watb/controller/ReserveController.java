@@ -1,27 +1,29 @@
 package com.watb.controller;
 
-import java.util.Map;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.watb.domain.dto.ReservationRequest;
-import com.watb.domain.entity.Reservation;
-import com.watb.service.ReservationService;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.watb.config.auth.UserDetail;
+import com.watb.domain.dto.ReservationRequest;
+import com.watb.domain.dto.UserInfoRequest;
+import com.watb.repository.UserRepository;
+import com.watb.service.ReservationService;
+import com.watb.service.UserService;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ReserveController {
 
 	private final ReservationService reservationService;
+	private final UserRepository userRepository;
 
 	@GetMapping("/index")
 	public String test() {
@@ -46,32 +49,18 @@ public class ReserveController {
 	}
 
 	@GetMapping("/reserve/detail")
-	public String detailPage(Model model) {
-		model.addAttribute("reservationRequest", new ReservationRequest());
+	public String getMethodName() {
 		return "reserveDetail";
 	}
 
-	@PostMapping("/postData")
-	public String createReservation(@RequestBody Map<String, Object> sendData, Authentication auth,
-			@ModelAttribute ReservationRequest request) {
-		System.out.println(auth.getName());
-		String usageTime = (String) sendData.get("usageTime"); // 이용 시간
-		String reservationTime = (String) sendData.get("reservationTime"); // 이용 시간
-		String guestCount = (String) sendData.get("guestCount"); // 인원수
-		String price = String.valueOf(sendData.get("price")); // 가격
-
-		int year = Integer.parseInt(sendData.get("reservationYear").toString());
-		int month = Integer.parseInt(sendData.get("reservationMonth").toString());
-		int day = Integer.parseInt(sendData.get("reservationDate").toString());
-		LocalDate date = LocalDate.of(year, month, day);
-		request.setReservationDate(date);
-		request.setReservationTime(reservationTime);
-		request.setUsageTime(usageTime);
-		request.setGuestCount(guestCount);
-		request.setPrice(price);
-
-		Long reservationId = reservationService.reservation(request, auth.getName());
-		System.out.println(reservationId);
-		return "redirect:/";
+	// 1. 예약 저장
+	@PostMapping("/reserve/{merchantUid}")
+	@ResponseBody
+	public void detailPage(@RequestBody ReservationRequest request, @PathVariable String merchantUid) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(merchantUid);
+		String loginId = auth.getName();
+		reservationService.reservation(request, loginId);
 	}
+
 }

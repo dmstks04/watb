@@ -134,7 +134,7 @@ function createTimeBtns(initTime, isToday) {
 }
 
 
-const nextBtn = document.querySelector('.next_btn');
+const saveBtn = document.querySelector('.save_btn');
 // let selectedCountBtn = false;
 // let selectedTimeBtn = false;
 
@@ -150,7 +150,7 @@ function buttonClick(buttons) {
 			btn.classList.add('selected');
 			if (btn.classList.contains('time_btn')) {
 				
-				nextBtn.removeAttribute('disabled');
+				saveBtn.removeAttribute('disabled');
 			}
 			// if (btn.classList.contains('date')) {
 			// 	createTimeBtns(initTime, false);
@@ -176,22 +176,67 @@ btnArrays.forEach(e => {
 //         selectedTimeBtn = true;
 //     }
 // }
-nextBtn.addEventListener('click', () => {
+// var today = new Date();
+// var year = today.getFullYear() - 2000;
+// var years = year.toString(); 
+// var hours = today.getHours().toString();
+// var minutes = today.getMinutes().toString();
+// var seconds = today.getSeconds().toString();
+// var milliseconds = today.getMilliseconds().toString();
+// var merchantUid = years + hours + minutes + seconds + milliseconds;
+saveBtn.addEventListener('click', () => {
 	const dateValue = document.querySelector('.date.selected');
 	const countValue = document.querySelector('.count_btn.selected');
 	const timeValue = document.querySelector('.time_btn.selected');
-	const month = document.querySelector('.title_month').innerHTML;
+	const monthValue = document.querySelector('.title_month').innerHTML;
 	const hourValue = document.querySelector('input[name="flexRadioDefault"]:checked');
-
+	
 	sessionStorage.setItem('reservationYear', JSON.stringify(viewYear));
 	sessionStorage.setItem('guestCount', JSON.stringify(countValue.textContent));
 	sessionStorage.setItem('reservationTime', JSON.stringify(timeValue.textContent));
-	sessionStorage.setItem("reservationMonth", JSON.stringify(month));
-	sessionStorage.setItem("reservationDate", JSON.stringify(dateValue.querySelector('span').textContent));
+	sessionStorage.setItem("reservationMonth", JSON.stringify(monthValue));
+	sessionStorage.setItem("reservationDay", JSON.stringify(dateValue.querySelector('span').textContent));
 	sessionStorage.setItem("usageTime", JSON.stringify(hourValue.value));
-	sessionStorage.setItem("optionInfo", JSON.stringify(optionInfo));
+	// sessionStorage.setItem("optionInfo", JSON.stringify(optionInfo));
+	// window.location.href = "/watb/reserve/detail";
 	
-	window.location.href = "/watb/reserve/detail";
+	/*
+	console.log("merchantUid= " + merchantUid);
+	// 예약 정보
+	const guestCount = JSON.parse(sessionStorage.getItem("guestCount"));
+	const year = JSON.parse(sessionStorage.getItem("reservationYear"));
+	const month = JSON.parse(sessionStorage.getItem("reservationMonth"));
+	const date = JSON.parse(sessionStorage.getItem("reservationDate"));
+
+	const reservationTime = JSON.parse(sessionStorage.getItem("reservationTime"));
+	const usageTime = JSON.parse(sessionStorage.getItem("usageTime"));
+	// const optionInfo = JSON.parse(sessionStorage.getItem("optionInfo"));
+	const amount = JSON.parse(sessionStorage.getItem("price"));
+	$.ajax({
+		type: 'POST',
+		url: `/watb/reserve/${merchantUid}`,
+		data: JSON.stringify({
+	        guestCount: guestCount,             // 인원수
+	        year: year,   // 년
+	        month: month, // 월
+	        date: date,   // 일
+	        reservationTime: reservationTime,   // 시
+	        usageTime: usageTime,               // 이용시간
+	        // optionInfo: optionInfo,             // 대여물품
+	        amount: parseInt(amount),             // 금액
+	        merchantUid: "IMP"+merchantUid            // 주문번호
+	    }),
+	    contentType: "application/json",
+		success: function (rsp) {
+			// window.location.href = `/watb/reserve/detail/${merchantUid}`;
+			console.log("예약내역 임시 저장");
+	    },
+	    error: function (error) {
+	        console.log(error);
+	    }
+	});
+	*/
+	window.location.href = `/watb/reserve/detail`;
 });
 // ==============================
 

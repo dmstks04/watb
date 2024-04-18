@@ -2,7 +2,7 @@ package com.watb.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.watb.domain.entity.Payment;
+import com.watb.domain.entity.Payments;
 
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
+public interface PaymentRepository extends JpaRepository<Payments, Long> {
 }

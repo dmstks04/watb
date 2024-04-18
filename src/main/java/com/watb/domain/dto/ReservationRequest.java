@@ -12,22 +12,29 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ReservationRequest {
-    private LocalDate reservationDate; // 예약일
+    private String year;
+    private String month;
+    private String day;
+
+    // private LocalDate reservationDate; // 예약일
     private String reservationTime;
     private String usageTime; // 이용 시간
     private String guestCount; // 인원수
-    private String price; // 가격
+    private String amount; // 가격
     private LocalDateTime created; // 등록날짜
-    // private Payment payment;
+    private String merchantUid;
 
     public Reservation toEntity(User user) {
+        LocalDate reservationDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month),
+                Integer.parseInt(day));
         return Reservation.builder()
                 .user(user)
                 .reservationDate(reservationDate)
                 .reservationTime(reservationTime)
                 .usageTime(usageTime)
                 .guestCount(guestCount)
-                .price(price)
+                .amount(amount)
+                .merchantUid(merchantUid)
                 .created(LocalDateTime.now())
                 .build();
     }
