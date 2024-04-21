@@ -1,6 +1,9 @@
 package com.watb.service;
 
+import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +32,11 @@ public class ReservationService {
     @Transactional
     public Long updateReserve(ReservationRequest request, String merchantUid) {
         Reservation reservation = reservationRepository.save(request.toEntity(null));
-
         return reservation.getId();
+    }
+
+    public List<Reservation> getUserReservations(User user) {
+
+        return reservationRepository.findAllByUser(user);
     }
 }

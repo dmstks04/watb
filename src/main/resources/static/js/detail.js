@@ -9,36 +9,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const reservationTime = JSON.parse(sessionStorage.getItem("reservationTime"));
     const reservationYear = JSON.parse(sessionStorage.getItem("reservationYear"));
     const reservationMonth = JSON.parse(sessionStorage.getItem("reservationMonth"));
-    const reservationDate = JSON.parse(sessionStorage.getItem("reservationDate"));
+    const reservationDay = JSON.parse(sessionStorage.getItem("reservationDay"));
     const usageTime = JSON.parse(sessionStorage.getItem("usageTime"));
     const optionInfo = JSON.parse(sessionStorage.getItem("optionInfo"));
     const price = JSON.parse(sessionStorage.getItem("price"));
-
-    const sendData = {
-        reservationYear: reservationYear,
-        guestCount: guestCount, // 인원수
-        reservationTime: reservationTime, // 몇시
-        reservationDate: reservationDate,   // 몇일
-        reservationMonth: reservationMonth, // 몇월
-        usageTime: usageTime, // 이용시간
-        optionInfo: optionInfo, // 대여물품,
-        price: price // 가격
-    }
 
     const countInfo = document.querySelector('.count_info');
     const dateInfo = document.querySelector('.date_info');
     const option = document.querySelector('.option_info');
     const priceInfo = document.querySelector('.price_info');
-
     date = new Date();
     date.setMonth(reservationMonth - 1);
-    date.setDate(reservationDate);
+    date.setDate(reservationDay);
     const formatter = new Intl.DateTimeFormat('kr', {
         weekday: "short"
     })
-    dateInfo.innerHTML = `${reservationMonth}.${reservationDate}(${formatter.format(date)}) ${reservationTime} ${usageTime}시간`;
+    dateInfo.innerHTML = `${reservationMonth}.${reservationDay}(${formatter.format(date)}) ${reservationTime} ${usageTime}시간`;
     countInfo.innerHTML = `${guestCount}명`;
-    // option.innerHTML = Object.entries(optionInfo).length === 0 ? '없음'
-    //     : optionInfo.map(option => ` ${option.name}. ${option.quantity}개`);
+    option.innerHTML = optionInfo.length === 0  || optionInfo === null ? '없음'
+        : optionInfo.map(option => `${option.name}(${option.quantity}개)`).join(', ');
     priceInfo.innerHTML = `<strong>${price}원</strong>`;
 });

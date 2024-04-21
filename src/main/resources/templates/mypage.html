@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout/default_layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<title>왓비</title>
+	<meta charset="UTF-8">
+
+</head>
+<th:block layout:fragment="content">
+
+	<body>
+		<div class="main">
+			<!-- <section class="section_info bg-white"> -->
+			<section class="section_info">
+				<!-- <p th:if="${not #strings.isEmpty(reservationList.id)}"></p> -->
+				<div th:if="${#lists.isEmpty(reservationList)}">
+					<p>내역없음</p>
+				</div>
+				<div th:unless="${#lists.isEmpty(reservationList)}">
+					<p th:text="${#authentication.getPrincipal()?.getUsername()}">님은</p>
+					<p th:value="${reservationList.size()}"></p>
+					<p>예약하셨고,</p>
+					<p>26,000원</p>
+					<p>결제하셨어요.</p>
+				</div>
+
+			</section>
+			<section class="section_user">
+
+			</section>
+			<section class="section_footer" style="margin: 30px 30px">
+				<div class="footer_payment_area">
+					<button class="back_btn">이전</button>
+				</div>
+			</section>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+			crossorigin="anonymous"></script>
+	</body>
+</th:block>
+
+</html>

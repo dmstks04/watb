@@ -10,287 +10,14 @@
 <th:block layout:fragment="content">
 	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 	<style>
-		.main,
-		.calender_area {
-			max-width: 720px;
-			margin: 0 auto;
-		}
 
-		.count_btn.selected,
-		.time_btn.selected {
-			color: #fff;
-			background-color: #3540A5;
-			border-color: #3540A5;
-		}
-
-		.count_list,
-		.time_list {
-			display: flex;
-		}
-
-		.count_item,
-		.time_item {
-			padding: 0 2px;
-		}
-
-		.time_item {
-			width: 25%;
-		}
-
-		.count_btn,
-		.time_btn {
-			width: 100%;
-			min-width: 57px;
-			height: 40px;
-			background-color: #fff;
-			border: 1px solid;
-			border-radius: 8px;
-			font-size: 14px;
-			line-height: 16px;
-			color: #444447;
-		}
-
-		.time_area {
-			margin-top: 20px;
-			padding-top: 20px;
-			border-top: 1px solid;
-			border-color: #f0f0f3;
-		}
-
-		.person_count_area {
-			margin: 0 16px -20px;
-			padding-bottom: 20px;
-			border-bottom: 1px solid;
-			border-color: #f0f0f3;
-		}
-
-		.section_title {
-			padding: 40px 16px 0;
-			font-size: 20px;
-		}
-
-
-		ul {
-			list-style: none;
-
-		}
-
-		.section_footer .footer_inner {
-			display: flex;
-			max-width: 720px;
-			margin-top: 10px;
-			padding: 12px 16px;
-			box-sizing: border-box;
-		}
-
-		.save_btn {
-			flex: 1;
-			border-radius: 8px;
-			background-color: #c5c5c7;
-			line-height: 40px;
-			color: #fff;
-		}
-
-		.save_btn:enabled {
-			flex: 1;
-			border-radius: 8px;
-			color: #fff;
-			background-color: #3540A5;
-			border-color: #3540A5;
-			line-height: 40px;
-		}
-
-		.time_radio_area {
-			display: flex;
-			justify-content: flex-end;
-			margin-top: 20px;
-			padding-top: 20px
-		}
-
-		.form-check {
-			margin-right: 30px;
-		}
-
-		.year-month {
-			font-size: 35px;
-		}
-
-		button {
-			border: none;
-			background-color: rgba(0, 0, 0, 0);
-		}
-
-		.days {
-			display: flex;
-			margin: 25px 0 10px;
-		}
-
-		.day {
-			width: calc(100% / 7);
-			text-align: center;
-		}
-
-		.dates {
-			display: flex;
-			flex-flow: row wrap;
-			height: 400px;
-		}
-
-		.date {
-			width: calc(100% / 7);
-			text-align: center;
-			display: flex;
-			align-items: center;
-			flex-direction: column;
-			height: 70px;
-		}
-
-		.date.unselectable .sp.num {
-			opacity: 0.9;
-			color: #c5c5c7;
-		}
-
-		.day:nth-child(7n),
-		.date:nth-child(7n) {
-			color: #396EE2;
-		}
-
-		.day:nth-child(7n + 1),
-		.date:nth-child(7n + 1) {
-			color: #D13E3E;
-		}
-
-		.unselectable {
-			opacity: 0.9;
-			color: #c5c5c7;
-		}
-
-		.selected {
-			color: #ffffff;
-			background-color: #3540A5;
-			border-radius: 8px;
-		}
-
-		.sp {
-			flex: 1;
-			display: flex;
-			align-content: center;
-			flex-wrap: wrap;
-		}
-
-		.selected .sp {
-			color: #ffffff;
-		}
-
-		.sp.num {
-			margin-top: 8px;
-		}
-
-		.sp.text {
-			display: block;
-			margin-top: 2px;
-			font-size: 11px;
-			line-height: 12px;
-		}
-
-		.opt-select {
-			width: 55%;
-			padding: 10px;
-			box-sizing: border-box;
-			background-color: rgb(245, 245, 245);
-		}
-
-		.opt-title {
-			display: flex;
-
-			justify-content: flex-end;
-		}
-
-		.opt-detail-box {
-			padding: 10px;
-		}
-
-		.opt-ul {
-			width: 100%;
-		}
-
-		.opt-li {
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-			width: 100%;
-			padding: 10px;
-			box-sizing: border-box;
-
-		}
-
-		em {
-			font-style: normal;
-			width: 180px;
-		}
-
-		.opt-a {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 24px;
-			height: 24px;
-			background-color: rgb(243, 243, 243);
-			cursor: pointer;
-		}
-
-		.opt-input {
-			width: 36px;
-			height: 24px;
-			border: 1px solid rgb(243, 243, 243);
-			box-sizing: border-box;
-			background-color: rgb(255, 255, 255);
-			font-size: 12px;
-			text-align: center;
-		}
-
-		.opt-count-box {
-			display: flex;
-		}
-
-		.opt-strong {
-			width: 100px;
-			text-align: right;
-		}
-
-		.calender_title {
-			display: -webkit-box;
-			display: -ms-flexbox;
-			display: flex;
-			-webkit-box-align: center;
-			-ms-flex-align: center;
-			align-items: center;
-			-webkit-box-pack: justify;
-			-ms-flex-pack: justify;
-			justify-content: space-between;
-			width: 130px;
-			margin: 0 auto 24px;
-			font-weight: 600;
-			font-size: 20px;
-			line-height: 25px;
-			color: #222225;
-			color: var(--booking-color-gray10);
-		}
-
-		.time_list {
-			padding-left: 0;
-		}
-
-		.count_list {
-			padding-left: 0;
-		}
 	</style>
 
 
 	<body>
 		<div class="main container">
-			<section>
-				<div class="person_count_area" style="margin-top: 50px;">
+			<section class="bg-white">
+				<div class="person_count_area">
 					<h3 class="section_title">인원을 선택 해주세요.</h3>
 					<div class="section_content">
 						<ul class="count_list">
@@ -324,9 +51,17 @@
 							<li class="count_item">
 								<button type="button" class="count_btn">10</button>
 							</li>
+							<li class="count_item">
+								<button type="button" class="count_btn">11</button>
+							</li>
+							<li class="count_item">
+								<button type="button" class="count_btn">12</button>
+							</li>
 						</ul>
 					</div>
 				</div>
+			</section>
+			<section class="bg-white">
 				<h3 class="section_title cal">오늘 날짜 출력 : 시간을 선택 해주세요.</h3>
 				<!-- calender area -->
 				<div class="section_content">
@@ -356,31 +91,34 @@
 							</div>
 						</div>
 					</div>
-					<!-- time area-->
-					<div class="time_area">
-						<div class="calender-time-slot">
-						</div>
+
+				</div>
+			</section>
+			<section class="bg-white">
+				<!-- time area-->
+				<div class="time_area">
+					<div class="calender-time-slot">
 					</div>
-					<div class="time_radio_area">
-						<div class="form-check">
-							<input class="form-check-input" type="radio" value="1" name="flexRadioDefault"
-								id="flexRadioDefault1" checked>
-							<label class="form-check-label" for="flexRadioDefault1">
-								1시간
-							</label>
-						</div>
-						<div class="form-check">
-							<input class="form-check-input" type="radio" value="2" name="flexRadioDefault"
-								id="flexRadioDefault2">
-							<label class="form-check-label" for="flexRadioDefault2">
-								2시간
-							</label>
-						</div>
+				</div>
+				<div class="time_radio_area">
+					<div class="form-check">
+						<input class="form-check-input" type="radio" value="1" name="flexRadioDefault"
+							id="flexRadioDefault1" checked>
+						<label class="form-check-label" for="flexRadioDefault1">
+							1시간
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="radio" value="2" name="flexRadioDefault"
+							id="flexRadioDefault2">
+						<label class="form-check-label" for="flexRadioDefault2">
+							2시간
+						</label>
 					</div>
 				</div>
 			</section>
 
-			<section>
+			<section class="bg-white">
 				<h3 class="section_title">대여 물품</h3>
 				<div class="item-area">
 					<div class="opt-title">
