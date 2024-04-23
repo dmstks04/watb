@@ -13,6 +13,8 @@ public class PaymentsRequest {
     private String impUid;
     private String merchantUid;
     private Integer amount;
+    private String status;
+    private String paidAt;
 
     public Payments toEntity(User user, Reservation reservation) {
         return Payments.builder()
@@ -21,7 +23,8 @@ public class PaymentsRequest {
                 .amount(amount)
                 .user(user)
                 .reservation(reservation)
-                // .status(PaymentStatus.READY)
+                .status(status)
+                .paidAt(paidAt)
                 .build();
     }
 }

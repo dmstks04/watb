@@ -24,10 +24,10 @@ public class Payments {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer amount;
-    // private PaymentStatus status;
+    private String status; // 결제 상태
     private String merchantUid; // 주문번호
     private String impUid; // 결제 고유 번호
-
+    private String paidAt; // 결제 승인 시각
     @OneToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;

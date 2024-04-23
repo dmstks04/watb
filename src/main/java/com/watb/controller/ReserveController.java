@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
+
+import com.watb.domain.dto.ReservationDTO;
 import com.watb.domain.dto.ReservationRequest;
 import com.watb.domain.entity.Reservation;
 import com.watb.domain.entity.User;
@@ -36,19 +38,13 @@ public class ReserveController {
 	public String myPage(Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loginId = auth.getName();
-		User user = userService.findUser(loginId);
-		System.out.println(user);
-		List<Reservation> reservationList = reservationService.getUserReservations(user);
-		model.addAttribute("reservationList", reservationList);
-		if (reservationList.isEmpty()) {
-			System.out.println("내역 없음");
-		} else {
-			System.out.println(reservationList.size());
-
-		}
-		// reservationService.getReservationList(userId);
-		// model.addAttribute("list", reservationService.getReservationList(loginId));
-		// reservationService.getReservationList(user).forEach(System.out::println);
+		// List<ReservationDTO> reservations =
+		// reservationService.getReservations(loginId);
+		List<Reservation> reservations = reservationService.getUserReservations(loginId);
+		reservations.forEach(System.out::println);
+		System.out.println(reservations.isEmpty());
+		System.out.println(reservations.size());
+		model.addAttribute("reservations", reservations);
 		return "mypage";
 	}
 

@@ -3,6 +3,7 @@ package com.watb.service;
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
@@ -16,7 +17,6 @@ import com.watb.repository.PaymentRepository;
 import com.watb.repository.ReservationRepository;
 import com.watb.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,6 +28,7 @@ public class PaymentService {
     private final IamportClient iamportClient;
 
     // 결제 조회
+    @Transactional
     public IamportResponse<Payment> paymentCallback(PaymentsRequest paymentsRequest)
             throws IamportResponseException, IOException {
         IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(paymentsRequest.getImpUid());
@@ -38,7 +39,6 @@ public class PaymentService {
     @Transactional
     public void verifyPayment(IamportResponse<Payment> iamportResponse, PaymentsRequest paymentsRequest)
             throws IOException {
-
         // 금액 비교
         if (iamportResponse.getResponse().getAmount().intValue() != paymentsRequest.getAmount())
             throw new IOException();
@@ -47,12 +47,14 @@ public class PaymentService {
 
         // 1. 예약 내역 조회
         Reservation reservation = reservationRepository.findByMerchantUid(paymentsRequest.getMerchantUid());
-        if (paymentsRequest.getAmount() != Integer.parseInt(reservation.getAmount()))
-            throw new IOException();
 
-        // 2. 결제 내역 저장
-        Payments payments = paymentRepository.save(paymentsRequest.toEntity(user, reservation));
-        reservation.setPayments(payments);
+        // 결제 금액 검증
+        if (paymentsRequest.getAmount().equals(reservation.getAmount())) {
+            // 2. 결제 내역 저장
+            Payments payments = paymentRepository.save(paymentsRequest.toEntity(user, reservation));
+            reservation.setPayments(payments);
+        }
+
     }
 
 }

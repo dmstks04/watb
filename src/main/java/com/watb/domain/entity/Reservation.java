@@ -13,13 +13,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,7 +33,7 @@ public class Reservation {
     private String reservationTime; // 예약 시간
     private String usageTime; // 이용 시간
     private String guestCount; // 인원수
-    private String amount; // 가격
+    private Integer amount; // 가격
     private LocalDateTime created; // 등록날짜
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payments_id")

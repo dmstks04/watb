@@ -20,7 +20,7 @@ public class ReservationRequest {
     private String reservationTime;
     private String usageTime; // 이용 시간
     private String guestCount; // 인원수
-    private String amount; // 가격
+    private Integer amount; // 가격
     private LocalDateTime created; // 등록날짜
     private String merchantUid;
 

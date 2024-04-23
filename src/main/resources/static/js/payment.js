@@ -38,7 +38,6 @@ const onclickPay = async () => {
             // 결제 성공 시
             // 1. 예약 내역 저장
             merchantUid = rsp.merchant_uid;
-            impUid = rsp.imp_uid;
             $.ajax({
                 type: 'POST',
                 url: `/watb/reserve/${merchantUid}`,
@@ -69,7 +68,9 @@ const onclickPay = async () => {
                         data: JSON.stringify({
                             "amount": rsp.paid_amount,
                             "impUid": rsp.imp_uid,      // 결제 고유번호
-                            "merchantUid": rsp.merchant_uid   // 주문번호
+                            "merchantUid": rsp.merchant_uid,   // 주문번호
+                            "paidAt": rsp.paid_at,
+                            "status": rsp.status
                         }),
                         // data: JSON.stringify(data),
                         success: function (response) {

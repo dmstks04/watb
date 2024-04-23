@@ -42,12 +42,6 @@ public class UserService {
 		return user;
 	}
 
-	public User findUser(String loginId) {
-
-		return userRepository.findReservationByLoginId(loginId);
-
-	}
-
 	public BindingResult joinValid(UserJoinRequest req, BindingResult bindingResult) {
 		if (req.getLoginId().isEmpty()) {
 			bindingResult.addError(new FieldError("req", "loginId", "아이디가 비어있습니다."));

@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.watb.domain.entity.User;
+import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
 	boolean existsByLoginId(String loginId);
 
 	boolean existsByNickname(String nickname);
@@ -17,5 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findPaymentsByLoginId(String loginId);
 
-	User findReservationByLoginId(String loginId);
+	// User findReservationByLoginId(String loginId);
+
 }

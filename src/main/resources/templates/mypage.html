@@ -14,16 +14,25 @@
 		<div class="main">
 			<!-- <section class="section_info bg-white"> -->
 			<section class="section_info">
-				<!-- <p th:if="${not #strings.isEmpty(reservationList.id)}"></p> -->
-				<div th:if="${#lists.isEmpty(reservationList)}">
-					<p>내역없음</p>
+				<!-- <p th:if="${not #strings.isEmpty(reservations.id)}"></p> -->
+				<div th:if="${reservations == null or reservations.size() == 0}">
+					<p>내역없음??</p>
 				</div>
-				<div th:unless="${#lists.isEmpty(reservationList)}">
+
+				<div th:unless="${#lists.isEmpty(reservations)}">
 					<p th:text="${#authentication.getPrincipal()?.getUsername()}">님은</p>
-					<p th:value="${reservationList.size()}"></p>
+					<p th:text="${reservations.size()}"></p>
 					<p>예약하셨고,</p>
 					<p>26,000원</p>
-					<p>결제하셨어요.</p>
+					<!-- <p>결제하셨어요.</p> -->
+					<div th:each="reservation : ${reservations}">
+						<p th:text="${reservation.reservationDate}">원</p>
+						<p th:text="${reservation.reservationTime + '시'}"></p>
+						<p th:text="${reservation.usageTime + '시간'}"></p>
+						<p th:text="${reservation.guestCount +'명'}"></p>
+						<p th:text="${reservation.created}">원</p>
+						<p th:text="${reservation.amount + '원'}"></p>
+					</div>
 				</div>
 
 			</section>
