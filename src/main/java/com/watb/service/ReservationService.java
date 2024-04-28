@@ -3,6 +3,7 @@ package com.watb.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +26,14 @@ public class ReservationService {
     private final PaymentRepository paymentRepository;
 
     @Transactional
-    public String reservation(ReservationRequest request, String loginId) {
+    public Long reservation(ReservationRequest request, String loginId) {
         User loginUser = userRepository.findByLoginId(loginId).get();
-        Reservation saveReserve = reservationRepository.save(request.toEntity(loginUser));
-        return saveReserve.getMerchantUid();
+        try {
+            Reservation saveReserve = reservationRepository.saveAndFlush(request.toEntity(loginUser));
+            return saveReserve.getId();
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("예약 중복입니다.");
+        }
     }
 
     @Transactional

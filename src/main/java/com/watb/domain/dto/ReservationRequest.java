@@ -27,6 +27,7 @@ public class ReservationRequest {
     public Reservation toEntity(User user) {
         LocalDate reservationDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month),
                 Integer.parseInt(day));
+        LocalDateTime truncatedDateTime = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
         return Reservation.builder()
                 .user(user)
                 .reservationDate(reservationDate)
@@ -35,7 +36,7 @@ public class ReservationRequest {
                 .guestCount(guestCount)
                 .amount(amount)
                 .merchantUid(merchantUid)
-                .created(LocalDateTime.now())
+                .created(truncatedDateTime)
                 .build();
     }
 }

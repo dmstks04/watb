@@ -27,6 +27,8 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final IamportClient iamportClient;
 
+    private Payments payments;
+
     // 결제 조회
     @Transactional
     public IamportResponse<Payment> paymentCallback(PaymentsRequest paymentsRequest)
@@ -44,14 +46,12 @@ public class PaymentService {
             throw new IOException();
         // 유저 조회
         User user = userRepository.findPaymentsByLoginId(iamportResponse.getResponse().getBuyerEmail());
-
         // 1. 예약 내역 조회
         Reservation reservation = reservationRepository.findByMerchantUid(paymentsRequest.getMerchantUid());
-
         // 결제 금액 검증
         if (paymentsRequest.getAmount().equals(reservation.getAmount())) {
             // 2. 결제 내역 저장
-            Payments payments = paymentRepository.save(paymentsRequest.toEntity(user, reservation));
+            payments = paymentRepository.save(paymentsRequest.toEntity(user, reservation));
             reservation.setPayments(payments);
         }
 

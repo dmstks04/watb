@@ -22,14 +22,13 @@ public class PaymentController {
 
     @ResponseBody
     @PostMapping("/payment")
-    public IamportResponse<Payment> payment(@RequestBody PaymentsRequest paymentsRequest)
+    public void payment(@RequestBody PaymentsRequest paymentsRequest)
             // PaymentsRequest paymentsRequest)
             throws IamportResponseException, IOException {
         // 결제 조회
         IamportResponse<Payment> iamportResponse = paymentService.paymentCallback(paymentsRequest);
         // 결제 검증
         paymentService.verifyPayment(iamportResponse, paymentsRequest);
-        return iamportResponse;
     }
 
 }
