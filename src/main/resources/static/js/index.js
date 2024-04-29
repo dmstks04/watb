@@ -1,9 +1,22 @@
 let date = new Date();
+let currentMonthDates = [];
+let prevMonthDates = [];
+let nextMonthDates = [];
+
+let monthIndex = [];
+let nextMonthIndex = [];
 const initTime = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 let viewYear;
+let viewMonth;
 const renderCalender = () => {
+	
 	viewYear = date.getFullYear();
-	const viewMonth = date.getMonth();
+	viewMonth = date.getMonth();
+	monthIndex = [];
+	nextMonthIndex = [];
+	currentMonthDates = [];
+	prevMonthDates = [];
+	nextMonthDates = [];
 	document.querySelector('.title_year').textContent = `${viewYear}.`;
 	document.querySelector('.title_month').textContent = `${viewMonth + 1}`;
 	document.querySelector('.cal').textContent = `${viewMonth + 1}.(일).(요일) 시간을 선택해 주세요`;
@@ -17,9 +30,8 @@ const renderCalender = () => {
 	const curMonthLastDay = currentMonth.getDay();
 	
 	
-	const currentMonthDates =  [...Array(curMonthLastDate + 1).keys()].slice(1);
-	const prevMonthDates = [];
-	const nextMonthDates = [];
+	currentMonthDates =  [...Array(curMonthLastDate + 1).keys()].slice(1);
+	
 
 	if(prevMonthLastDay !== 6) {
 		for(let i = 0; i <= prevMonthLastDay; i++){
@@ -33,32 +45,56 @@ const renderCalender = () => {
 	let nDate = new Date();
 	const formattedDates = prevMonthDates.concat(currentMonthDates, nextMonthDates);
 	
-	todayNum = currentMonthDates.reduce((acc, num, index) => {
+	todayNum = currentMonthDates.reduce((acc, num) => {
 			if (num == (nDate.getDate())) {
 				acc.push(num);
 			}
 			return acc;
 	}, []);
-
+	let temp = parseInt(todayNum);
+	console.log("다음달 길이" + nextMonthDates.length);
+	console.log("이번달 길이 " +currentMonthDates.length)
+	console.log("오늘날짜인덱스" + currentMonthDates.indexOf(temp))
+	let total = 0;
+	console.log(currentMonthDates.length - currentMonthDates.indexOf(temp));
+	// 오늘 부터 마지막 까지 날짜 갯수
+	total = (currentMonthDates.length - currentMonthDates.indexOf(temp)) + nextMonthDates.length;
+	console.log(total)
 	formattedDates.forEach((date, i) => {
 		let condition = 'unselectable';
 		let todayClass = '';
+		// date는 30, 31 , 1,  2, 3, 4인데
+		// todayNum 30이랑 비교하니깐 1,2,3,4는 안나옴
+		// 그래서 index로 비교해야함
+		
 		if (viewMonth === nDate.getMonth()) {
-			if (!((i < todayNum) || (i-1 > currentMonthDates.length + prevMonthDates.length))) {
+			if (formattedDates.indexOf(temp) <= i) {
 				condition = '';
 			}
+			// if (!((i < todayNum) || (i-1 > currentMonthDates.length + prevMonthDates.length))) {
+			// 	condition = '';
+			// }
+			
 			if (i == todayNum) {
 				todayClass = 'today';
 			}
+		} else if (viewMonth == nDate.getMonth()+1) {
+			if (i <= (formattedDates.length - (total+1)) ) {
+				condition = '';
+			}
+			
 		}
-		formattedDates[i] = `<button type="button" class="date${condition ? ` ${condition}` : ''}${todayClass ? ` ${todayClass}` : ''} ">
+		formattedDates[i] = `<button type="button" value=${i} class="date${condition ? ` ${condition}` : ''}${todayClass ? ` ${todayClass}` : ''} ">
 								<span class="sp num">${date}</span>
 								<span class="sp text"></span>
 							</button>`;
 		
+		monthIndex.push(i);
+		nextMonthIndex = monthIndex.slice(-nextMonthDates.length);
+		
 	});
+
 	document.querySelector('.dates').innerHTML = formattedDates.join('');
-	
 	const otherBtn = document.querySelectorAll('.date.unselectable');
 	otherBtn.forEach(e => {
 		e.disabled = true;
@@ -84,12 +120,13 @@ function calenderBtn(event) {
 		date.setMonth(date.getMonth() - 1);
 	} else if(btnClass.classList.contains('go-next')){
 		date.setMonth(date.getMonth() + 1);
+		
 	}
-
-	const currDate = new Date();
-	isToday = false;
+	renderCalender();
+	// const currDate = new Date();
+	// isToday = false;
+	// renderCalender(()=> createTimeBtns(initTime, isToday));
 	
-	renderCalender(()=> createTimeBtns(initTime, isToday));
 }
 
 // li태그 생성
@@ -145,18 +182,26 @@ const btnArrays = [countBtns,timeBtns,dateBtns]
 
 function buttonClick(buttons) {
 	buttons.forEach(btn => {
-		btn.addEventListener('click', () => {
+		btn.addEventListener('click', e => {
 			buttons.forEach(otherBtn => otherBtn.classList.remove('selected'));
 			btn.classList.add('selected');
+			let temp = parseInt(e.target.value)
+			// console.log(nextMonthIndex.indexOf(temp))
+			console.log()
+			if (nextMonthIndex.indexOf(temp) !== -1) {
+				date.setMonth(date.getMonth() + 1);
+				console.log("다음달 날짜")
+				renderCalender();
+			} else {
+				console.log("false")
+			}
 			if (btn.classList.contains('time_btn')) {
-				
 				saveBtn.removeAttribute('disabled');
 			}
-			// if (btn.classList.contains('date')) {
-			// 	createTimeBtns(initTime, false);
-			// }
 		})
 	})
+
+	
 }
 btnArrays.forEach(e => {
 	buttonClick(e);
