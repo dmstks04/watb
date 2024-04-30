@@ -5,15 +5,20 @@ let nextMonthDates = [];
 
 let monthIndex = [];
 let nextMonthIndex = [];
+let currentMonthIndex = [];
+let prevMonthIndex = [];
+
 const initTime = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 let viewYear;
 let viewMonth;
 const renderCalender = () => {
-	
 	viewYear = date.getFullYear();
 	viewMonth = date.getMonth();
 	monthIndex = [];
 	nextMonthIndex = [];
+	currentMonthIndex = [];
+	prevMonthIndex = [];
+
 	currentMonthDates = [];
 	prevMonthDates = [];
 	nextMonthDates = [];
@@ -81,9 +86,10 @@ const renderCalender = () => {
 		
 		monthIndex.push(i);
 		nextMonthIndex = monthIndex.slice(-nextMonthDates.length);
+		currentMonthIndex = monthIndex.slice(prevMonthDates.length).slice(0, -nextMonthDates.length);
+		prevMonthIndex = monthIndex.slice(0, prevMonthDates.length);
 		
 	});
-
 	document.querySelector('.dates').innerHTML = formattedDates.join('');
 	const otherBtn = document.querySelectorAll('.date.unselectable');
 	otherBtn.forEach(e => {
@@ -94,13 +100,14 @@ const renderCalender = () => {
 	btn.forEach(e => {
 		if (e.classList.contains('today')) {
 			e.querySelector('span.text').textContent = `오늘`;
-			e.classList.add('selected');
+			// e.classList.add('selected');
 		}
 	})
 	
 	let isToday = false;
 	// createTimeBtns(initTime, isToday);
 }
+
 renderCalender();
 createTimeBtns(initTime, false);
 
@@ -172,31 +179,35 @@ const timeBtns = document.querySelectorAll('.time_btn');
 const dateBtns = document.querySelectorAll('.date');
 
 // 달력이 변경 됐을 때 기존 이벤트가 없어지는 거 방지
-document.addEventListener('click', function(event) {
+document.addEventListener('click', event => {
 	if (event.target.classList.contains('date')) {
 		const dateBtns = document.querySelectorAll('.date');
 		addSelectedClass(event.target, dateBtns);
 
 		let index = parseInt(event.target.value)
-		let prevText = event.target.querySelector('.sp.num').textContent.trim();
-		// 다음달에 해당하는 날짜 클릭 시
+		let clickText = event.target.querySelector('.sp.num').textContent.trim();
+		
 		if (nextMonthIndex.indexOf(index) !== -1) {
 			date.setMonth(date.getMonth() + 1);
-			renderCalender();
-			const nextDateBtns = document.querySelectorAll('.date');
-			let found = false;
-			
-			nextDateBtns.forEach(btn => {
-				const nextText = btn.querySelector('.sp.num').textContent.trim();
-				if (!found && nextText == prevText) {
-						btn.classList.add('selected');
-						found = true;
-				}
-			})
+		} else if (prevMonthIndex.indexOf(index) !== -1) {
+			date.setMonth(date.getMonth() - 1);
 		}
+		changeMonth(clickText);
     }
 });
-
+function changeMonth(clickText) {
+	renderCalender();
+	const nextDateBtns = document.querySelectorAll('.date:not(.unselectable)');
+	let found = false;
+	
+	nextDateBtns.forEach(btn => {
+		const nextText = btn.querySelector('.sp.num').textContent.trim();
+		if (!found && nextText == clickText) {
+			addSelectedClass(btn, dateBtns);
+			found = true;
+		}
+	})
+}
 guestCountBtns.forEach(btn => {
 	btn.addEventListener('click', () => {
 		addSelectedClass(btn, guestCountBtns);
@@ -250,6 +261,8 @@ const formatter = new Intl.NumberFormat('kr', {
 
 window.addEventListener('load', () => {
 	calculatePrice();
+	const todayBtn = document.querySelector('.today');
+	todayBtn.classList.add('selected');
 });
 
 const radioBtn = document.querySelectorAll('input[name="flexRadioDefault"]');
