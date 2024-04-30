@@ -45,12 +45,13 @@ const renderCalender = () => {
 	let nDate = new Date();
 	const formattedDates = prevMonthDates.concat(currentMonthDates, nextMonthDates);
 	
-	todayNum = currentMonthDates.reduce((acc, num) => {
-			if (num == (nDate.getDate())) {
-				acc.push(num);
-			}
-			return acc;
-	}, []);
+	// todayNum = currentMonthDates.reduce((acc, num) => {
+	// 		if (num == (nDate.getDate())) {
+	// 			acc.push(num);
+	// 		}
+	// 		return acc;
+	// }, []);
+	todayNum = nDate.getDate();
 	let temp = parseInt(todayNum);
 	let total = 0;
 	// 오늘 부터 마지막 까지 날짜 갯수
@@ -60,22 +61,19 @@ const renderCalender = () => {
 		let todayClass = '';
 		
 		if (viewMonth === nDate.getMonth()) {
-			if (formattedDates.indexOf(temp) <= i) {
+			if (i >= prevMonthDates.length) {
 				condition = '';
 			}
-			// if (!((i < todayNum) || (i-1 > currentMonthDates.length + prevMonthDates.length))) {
-			// 	condition = '';
-			// }
-			// month 와 date를 같이 체크 하면 today 한개만 나올듯
-			if (i == todayNum) {
+			if (i >= prevMonthDates.length && i < formattedDates.length - nextMonthDates.length && date == temp) {
 				todayClass = 'today';
 			}
-		} else if (viewMonth == nDate.getMonth()+1) {
-			if (i <= (formattedDates.length - (total+1)) ) {
+		} else if (viewMonth == nDate.getMonth() + 1) {
+			if (i <= (formattedDates.length - total)) {
 				condition = '';
 			}
 			
 		}
+		
 		formattedDates[i] = `<button type="button" value=${i} class="date${condition ? ` ${condition}` : ''}${todayClass ? ` ${todayClass}` : ''} ">
 								<span class="sp num">${date}</span>
 								<span class="sp text"></span>
@@ -96,6 +94,7 @@ const renderCalender = () => {
 	btn.forEach(e => {
 		if (e.classList.contains('today')) {
 			e.querySelector('span.text').textContent = `오늘`;
+			e.classList.add('selected');
 		}
 	})
 	
