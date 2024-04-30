@@ -52,20 +52,12 @@ const renderCalender = () => {
 			return acc;
 	}, []);
 	let temp = parseInt(todayNum);
-	console.log("다음달 길이" + nextMonthDates.length);
-	console.log("이번달 길이 " +currentMonthDates.length)
-	console.log("오늘날짜인덱스" + currentMonthDates.indexOf(temp))
 	let total = 0;
-	console.log(currentMonthDates.length - currentMonthDates.indexOf(temp));
 	// 오늘 부터 마지막 까지 날짜 갯수
 	total = (currentMonthDates.length - currentMonthDates.indexOf(temp)) + nextMonthDates.length;
-	console.log(total)
 	formattedDates.forEach((date, i) => {
 		let condition = 'unselectable';
 		let todayClass = '';
-		// date는 30, 31 , 1,  2, 3, 4인데
-		// todayNum 30이랑 비교하니깐 1,2,3,4는 안나옴
-		// 그래서 index로 비교해야함
 		
 		if (viewMonth === nDate.getMonth()) {
 			if (formattedDates.indexOf(temp) <= i) {
@@ -74,7 +66,7 @@ const renderCalender = () => {
 			// if (!((i < todayNum) || (i-1 > currentMonthDates.length + prevMonthDates.length))) {
 			// 	condition = '';
 			// }
-			
+			// month 와 date를 같이 체크 하면 today 한개만 나올듯
 			if (i == todayNum) {
 				todayClass = 'today';
 			}
@@ -108,10 +100,10 @@ const renderCalender = () => {
 	})
 	
 	let isToday = false;
-	createTimeBtns(initTime, isToday);
+	// createTimeBtns(initTime, isToday);
 }
 renderCalender();
-
+createTimeBtns(initTime, false);
 
 // 달력 버튼
 function calenderBtn(event) {
@@ -160,6 +152,7 @@ function createTimeBtns(initTime, isToday) {
 	
 	let currentHourIndex = initTime.indexOf(currentHour) + 1;
 	isToday ? (currentHourIndex = initTime.indexOf(currentHour) + 1) : (currentHourIndex = 0);
+
 	initTime.slice(currentHourIndex).forEach((time, index) => {
 		if(index % 4 === 0){
 			ulElement = createUlElement();
@@ -175,52 +168,58 @@ const saveBtn = document.querySelector('.save_btn');
 // let selectedCountBtn = false;
 // let selectedTimeBtn = false;
 
-const countBtns = document.querySelectorAll('.count_btn');
+const guestCountBtns = document.querySelectorAll('.count_btn');
 const timeBtns = document.querySelectorAll('.time_btn');
 const dateBtns = document.querySelectorAll('.date');
-const btnArrays = [countBtns,timeBtns,dateBtns]
 
-function buttonClick(buttons) {
-	buttons.forEach(btn => {
-		btn.addEventListener('click', e => {
-			buttons.forEach(otherBtn => otherBtn.classList.remove('selected'));
-			btn.classList.add('selected');
-			let temp = parseInt(e.target.value)
-			// console.log(nextMonthIndex.indexOf(temp))
-			console.log()
-			if (nextMonthIndex.indexOf(temp) !== -1) {
-				date.setMonth(date.getMonth() + 1);
-				console.log("다음달 날짜")
-				renderCalender();
-			} else {
-				console.log("false")
-			}
-			if (btn.classList.contains('time_btn')) {
-				saveBtn.removeAttribute('disabled');
-			}
-		})
+// 달력이 변경 됐을 때 기존 이벤트가 없어지는 거 방지
+document.addEventListener('click', function(event) {
+	if (event.target.classList.contains('date')) {
+		const dateBtns = document.querySelectorAll('.date');
+		addSelectedClass(event.target, dateBtns);
+
+		let index = parseInt(event.target.value)
+		let prevText = event.target.querySelector('.sp.num').textContent.trim();
+		// 다음달에 해당하는 날짜 클릭 시
+		if (nextMonthIndex.indexOf(index) !== -1) {
+			date.setMonth(date.getMonth() + 1);
+			renderCalender();
+			const nextDateBtns = document.querySelectorAll('.date');
+			let found = false;
+			
+			nextDateBtns.forEach(btn => {
+				const nextText = btn.querySelector('.sp.num').textContent.trim();
+				if (!found && nextText == prevText) {
+						btn.classList.add('selected');
+						found = true;
+				}
+			})
+		}
+    }
+});
+
+guestCountBtns.forEach(btn => {
+	btn.addEventListener('click', () => {
+		addSelectedClass(btn, guestCountBtns);
 	})
-
-	
-}
-btnArrays.forEach(e => {
-	buttonClick(e);
 })
 
-//==========================================
 
-// handleButtonClick(dateBtns);
-// function toggleSelected(btn, btns) {
-//     btns.forEach(other => {
-//         other.classList.remove('selected');
-//     });
-//     btn.classList.add('selected');
-//     if (btns === countBtns) {
-//         selectedCountBtn = true;
-//     } else if (btns === timeBtns) {
-//         selectedTimeBtn = true;
-//     }
-// }
+timeBtns.forEach(btn => {
+	btn.addEventListener('click', () => {
+		addSelectedClass(btn, timeBtns);
+		saveBtn.removeAttribute('disabled');
+	})
+})
+
+function addSelectedClass(btn, type) {
+	const otherBtn = type
+	otherBtn.forEach(oBtn => {
+		oBtn.classList.remove('selected');
+	})
+	btn.classList.add('selected');
+}
+
 
 saveBtn.addEventListener('click', () => {
 	const dateValue = document.querySelector('.date.selected');
