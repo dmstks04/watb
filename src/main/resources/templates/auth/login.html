@@ -6,9 +6,6 @@
 	<meta charset="UTF-8">
 	<!-- <title>Insert title here</title> -->
 </head>
-<style>
-
-</style>
 
 <body>
 	<th:block layout:fragment="content">
@@ -29,15 +26,11 @@
 				<div>
 					<a>회원가입</a>
 				</div>
-				<!-- <div th:if test="${error}">
-					<p id="valid" class="alert alert-danger">${exception}</p>
-				</div> -->
 				<th:block th:if="${error}">
 					<p id="valid" class="alert alert-danger" th:text="${exception}"></p>
 				</th:block>
 			</form>
 		</div>
-
 </body>
 
 </th:block>

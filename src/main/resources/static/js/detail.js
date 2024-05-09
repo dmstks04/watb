@@ -1,8 +1,8 @@
-const backBtn = document.querySelector('.back_btn');
-backBtn.addEventListener("click", () => {
-    sessionStorage.clear();
-    history.back();
-});
+// const backBtn = document.querySelector('.back_btn');
+// backBtn.addEventListener("click", () => {
+//     sessionStorage.clear();
+//     history.back();
+// });
 
 document.addEventListener('DOMContentLoaded', function () {
     const guestCount = JSON.parse(sessionStorage.getItem("guestCount"));
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const formatter = new Intl.DateTimeFormat('kr', {
         weekday: "short"
     })
-    dateInfo.innerHTML = `${reservationMonth}.${reservationDay}(${formatter.format(date)}) ${reservationTime} ${usageTime}시간`;
+    dateInfo.innerHTML = `${reservationMonth}.${reservationDay}(${formatter.format(date)}) ${reservationTime}시 ~ ${parseInt(reservationTime)+parseInt(usageTime)}시`;
     countInfo.innerHTML = `${guestCount}명`;
     option.innerHTML = optionInfo.length === 0  || optionInfo === null ? '없음'
         : optionInfo.map(option => `${option.name}(${option.quantity}개)`).join(', ');

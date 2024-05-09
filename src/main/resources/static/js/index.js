@@ -2,29 +2,32 @@ let date = new Date();
 let currentMonthDates = [];
 let prevMonthDates = [];
 let nextMonthDates = [];
-
 let monthIndex = [];
 let nextMonthIndex = [];
 let currentMonthIndex = [];
 let prevMonthIndex = [];
-
+let reservationTime = [];
+const dateFormatter = new Intl.DateTimeFormat('kr', {
+    weekday: "short"
+})
 const initTime = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 let viewYear;
 let viewMonth;
+let viewDate;
 const renderCalender = () => {
 	viewYear = date.getFullYear();
 	viewMonth = date.getMonth();
+	viewDate = date.getDate();
 	monthIndex = [];
 	nextMonthIndex = [];
 	currentMonthIndex = [];
 	prevMonthIndex = [];
-
 	currentMonthDates = [];
 	prevMonthDates = [];
 	nextMonthDates = [];
 	document.querySelector('.title_year').textContent = `${viewYear}.`;
 	document.querySelector('.title_month').textContent = `${viewMonth + 1}`;
-	document.querySelector('.cal').textContent = `${viewMonth + 1}.(일).(요일) 시간을 선택해 주세요`;
+	document.querySelector('.cal').textContent = `${viewMonth + 1}.${viewDate}.(${dateFormatter.format(date)}) 시간을 선택해 주세요`;
 	const previousMonth = new Date(viewYear, viewMonth, 0);
 	const currentMonth = new Date(viewYear, viewMonth+1, 0);
 	
@@ -49,27 +52,20 @@ const renderCalender = () => {
 	}
 	let nDate = new Date();
 	const formattedDates = prevMonthDates.concat(currentMonthDates, nextMonthDates);
-	
-	// todayNum = currentMonthDates.reduce((acc, num) => {
-	// 		if (num == (nDate.getDate())) {
-	// 			acc.push(num);
-	// 		}
-	// 		return acc;
-	// }, []);
 	todayNum = nDate.getDate();
-	let temp = parseInt(todayNum);
+	let todayIndex = parseInt(todayNum);
 	let total = 0;
 	// 오늘 부터 마지막 까지 날짜 갯수
-	total = (currentMonthDates.length - currentMonthDates.indexOf(temp)) + nextMonthDates.length;
+	total = (currentMonthDates.length - currentMonthDates.indexOf(todayIndex)) + nextMonthDates.length;
 	formattedDates.forEach((date, i) => {
 		let condition = 'unselectable';
 		let todayClass = '';
 		
 		if (viewMonth === nDate.getMonth()) {
-			if (i >= prevMonthDates.length) {
+			if (i >= prevMonthDates.length + currentMonthDates.indexOf(todayIndex)) {
 				condition = '';
 			}
-			if (i >= prevMonthDates.length && i < formattedDates.length - nextMonthDates.length && date == temp) {
+			if (i >= prevMonthDates.length && i < formattedDates.length - nextMonthDates.length && date == todayIndex) {
 				todayClass = 'today';
 			}
 		} else if (viewMonth == nDate.getMonth() + 1) {
@@ -100,16 +96,10 @@ const renderCalender = () => {
 	btn.forEach(e => {
 		if (e.classList.contains('today')) {
 			e.querySelector('span.text').textContent = `오늘`;
-			// e.classList.add('selected');
 		}
 	})
-	
-	let isToday = false;
-	// createTimeBtns(initTime, isToday);
 }
-
 renderCalender();
-createTimeBtns(initTime, false);
 
 // 달력 버튼
 function calenderBtn(event) {
@@ -121,10 +111,6 @@ function calenderBtn(event) {
 		
 	}
 	renderCalender();
-	// const currDate = new Date();
-	// isToday = false;
-	// renderCalender(()=> createTimeBtns(initTime, isToday));
-	
 }
 
 // li태그 생성
@@ -134,6 +120,7 @@ function createLiElement(time) {
 	liElement.className = 'time_item';
 	btnElement.className = 'time_btn';
 	btnElement.innerHTML = `${time}:00`;
+	btnElement.value = `${time}`;
 	liElement.appendChild(btnElement);
 	return liElement;
 }
@@ -146,60 +133,111 @@ function createUlElement() {
 }
 
 // 시간 버튼 로딩
-function createTimeBtns(initTime, isToday) {	
+function createTimeBtns(reservationTime, isToday) {
+	
+	let ulElement;
+	let currentHour = new Date().getHours();
 	const timeSlot = document.querySelector('.calender-time-slot');
 	// 기존에 있던 버튼 요소 삭제
-	while(timeSlot.firstChild){
+	while (timeSlot.firstChild) {
 		timeSlot.removeChild(timeSlot.firstChild);
 	}
-	
-	let currentHour = new Date().getHours();
-	let ulElement;
-	
 	let currentHourIndex = initTime.indexOf(currentHour) + 1;
 	isToday ? (currentHourIndex = initTime.indexOf(currentHour) + 1) : (currentHourIndex = 0);
 
 	initTime.slice(currentHourIndex).forEach((time, index) => {
-		if(index % 4 === 0){
+		if (index % 4 === 0) {
 			ulElement = createUlElement();
 			timeSlot.appendChild(ulElement);
 		}
 		const liElement = createLiElement(time);
+		const timeBtnValue = liElement.querySelector('button').value;
+		if (reservationTime.includes(parseInt(timeBtnValue))) {
+			liElement.querySelector('button').innerHTML = "예약마감";
+			liElement.querySelector('button').disabled = true;
+		}
 		ulElement.appendChild(liElement);
 	});
-}
-
+}	
 
 const saveBtn = document.querySelector('.save_btn');
-// let selectedCountBtn = false;
-// let selectedTimeBtn = false;
-
 const guestCountBtns = document.querySelectorAll('.count_btn');
 const timeBtns = document.querySelectorAll('.time_btn');
 const dateBtns = document.querySelectorAll('.date');
 
+// 달력 날짜 클릭
 // 달력이 변경 됐을 때 기존 이벤트가 없어지는 거 방지
 document.addEventListener('click', event => {
 	if (event.target.classList.contains('date')) {
 		const dateBtns = document.querySelectorAll('.date');
 		addSelectedClass(event.target, dateBtns);
-
+		
 		let index = parseInt(event.target.value)
 		let clickText = event.target.querySelector('.sp.num').textContent.trim();
-		
 		if (nextMonthIndex.indexOf(index) !== -1) {
 			date.setMonth(date.getMonth() + 1);
 		} else if (prevMonthIndex.indexOf(index) !== -1) {
 			date.setMonth(date.getMonth() - 1);
 		}
+		
+		viewDate = date.setDate(clickText);
 		changeMonth(clickText);
-    }
+		sessionStorage.setItem("reservationDay", clickText);
+		selectDate();
+	}
+
+	if (event.target.classList.contains('time_btn')) {
+		addSelectedClass(event.target, timeBtns);
+		sessionStorage.setItem("reservationTime", event.target.value);
+		saveBtn.removeAttribute('disabled');
+	}
 });
+
+function selectDate() {
+	const year = sessionStorage.getItem("reservationYear");
+	const month = sessionStorage.getItem("reservationMonth");
+	const day = sessionStorage.getItem("reservationDay");
+	
+	let today = new Date();
+	let select = new Date(year, month - 1, day);
+	let isToday = false;
+	const dateFormatter = Intl.DateTimeFormat('kr', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	})
+	let todayDate = dateFormatter.format(today);
+	let selectedDate = dateFormatter.format(select)
+	
+	if (todayDate === selectedDate) {
+		isToday = true;
+	}
+		
+	$.ajax({
+		type: 'POST',
+		url: '/watb/reserve/date',
+		contentType: 'application/json',
+		data: JSON.stringify({
+			"year" : year,
+			"month": month,
+			"day" : day
+		}),
+		success: function (rsp) {
+			reservationTime = rsp;
+			createTimeBtns(reservationTime, isToday);
+		},
+		error: function (error) {
+			console.log(error)
+		}
+	})
+	
+	// createTimeBtns(reservationTime, false);
+}
+
 function changeMonth(clickText) {
 	renderCalender();
 	const nextDateBtns = document.querySelectorAll('.date:not(.unselectable)');
 	let found = false;
-	
 	nextDateBtns.forEach(btn => {
 		const nextText = btn.querySelector('.sp.num').textContent.trim();
 		if (!found && nextText == clickText) {
@@ -207,18 +245,22 @@ function changeMonth(clickText) {
 			found = true;
 		}
 	})
+	sessionStorage.setItem("reservationMonth", JSON.stringify(viewMonth+1));
 }
+
 guestCountBtns.forEach(btn => {
 	btn.addEventListener('click', () => {
+		sessionStorage.setItem("guestCount", btn.value)
 		addSelectedClass(btn, guestCountBtns);
 	})
 })
 
-
 timeBtns.forEach(btn => {
 	btn.addEventListener('click', () => {
+		// sessionStorage.setItem("reservationTime", btn.value);
+		// console.log(btn.value)
 		addSelectedClass(btn, timeBtns);
-		saveBtn.removeAttribute('disabled');
+		
 	})
 })
 
@@ -228,47 +270,42 @@ function addSelectedClass(btn, type) {
 		oBtn.classList.remove('selected');
 	})
 	btn.classList.add('selected');
+	
 }
 
-
 saveBtn.addEventListener('click', () => {
-	const dateValue = document.querySelector('.date.selected');
-	const countValue = document.querySelector('.count_btn.selected');
-	const timeValue = document.querySelector('.time_btn.selected');
-	const monthValue = document.querySelector('.title_month').innerHTML;
-	const hourValue = document.querySelector('input[name="flexRadioDefault"]:checked');
-	
-	sessionStorage.setItem('reservationYear', JSON.stringify(viewYear));
-	sessionStorage.setItem('guestCount', JSON.stringify(countValue.textContent));
-	sessionStorage.setItem('reservationTime', JSON.stringify(timeValue.textContent));
-	sessionStorage.setItem("reservationMonth", JSON.stringify(monthValue));
-	sessionStorage.setItem("reservationDay", JSON.stringify(dateValue.querySelector('span').textContent));
-	sessionStorage.setItem("usageTime", JSON.stringify(hourValue.value));
+	const usageTimeValue = document.querySelector('input[name="flexRadioDefault"]:checked');
+	sessionStorage.setItem("usageTime", JSON.stringify(usageTimeValue.value));
 	sessionStorage.setItem("optionInfo", JSON.stringify(optionInfo));
-	
 	window.location.href = `/watb/reserve/detail`;
 });
+
 // ==============================
 
 const optionBox = document.getElementById('option-box');
 let selectOptValue = null;
 let countValue = 1;
 
-const formatter = new Intl.NumberFormat('kr', {
+const amountFormatter = new Intl.NumberFormat('kr', {
 	style: 'currency',
 	currency: 'krw'
 })
 
 window.addEventListener('load', () => {
 	calculatePrice();
+	selectDate();
 	const todayBtn = document.querySelector('.today');
 	todayBtn.classList.add('selected');
+	const guestBtn = document.querySelector('.count_btn.selected');
+	sessionStorage.setItem('reservationYear', JSON.stringify(viewYear));
+	sessionStorage.setItem('reservationMonth', JSON.stringify(viewMonth + 1));
+	sessionStorage.setItem('reservationDay', JSON.stringify(viewDate));
+	sessionStorage.setItem('guestCount', JSON.stringify(guestBtn.value));
 });
 
 const radioBtn = document.querySelectorAll('input[name="flexRadioDefault"]');
 radioBtn.forEach(e => {
 	e.addEventListener('change', () => {
-		// 계산 실행 함수
 		calculatePrice()
 	})
 })

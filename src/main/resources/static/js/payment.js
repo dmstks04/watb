@@ -20,7 +20,6 @@ var hours = today.getHours().toString();
 var minutes = today.getMinutes().toString();
 var seconds = today.getSeconds().toString();
 var milliseconds = today.getMilliseconds().toString();
-// var makeMerchantUid = years + hours + minutes + seconds + milliseconds;
 var merchantUid = years + hours + minutes + seconds + milliseconds;
 
 const onclickPay = async () => { 
@@ -33,18 +32,17 @@ const onclickPay = async () => {
         url: `/watb/reserve/${merchantUid}`,
         contentType: 'application/json',
         data: JSON.stringify({
-            guestCount: guestCount,
+            guestCount: parseInt(guestCount),
             year: reservationYear,
             month: reservationMonth,
             day: reservationDay,
-            reservationTime: reservationTime,
-            usageTime: usageTime,
+            reservationTime: parseInt(reservationTime),
+            usageTime: parseInt(usageTime),
             // optionInfo: optionInfo,             // 대여물품
             amount: parseInt(amount),
             merchantUid: `MID${merchantUid}`          // 주문번호
         }),
-        success: function (id) {
-            console.log("예약 저장 성공 ! " + id);
+        success: function () {
             IMP.request_pay({
                 pg: "kakaopay",
                 pay_method: "card",
@@ -84,7 +82,6 @@ const onclickPay = async () => {
             });
         },
         error: function (xhr) {
-            // 오류 응답을 처리하는 코드
             alert(xhr.responseJSON.message);
             history.back();
         }

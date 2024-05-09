@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import com.watb.domain.dto.PaymentsCancelRequest;
 import com.watb.domain.dto.PaymentsRequest;
 import com.watb.domain.entity.Payments;
 import com.watb.domain.entity.Reservation;
@@ -30,8 +32,7 @@ public class PaymentService {
     private Payments payments;
 
     // 결제 조회
-    @Transactional
-    public IamportResponse<Payment> paymentCallback(PaymentsRequest paymentsRequest)
+    public IamportResponse<Payment> paymentResponse(PaymentsRequest paymentsRequest)
             throws IamportResponseException, IOException {
         IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(paymentsRequest.getImpUid());
         return iamportResponse;
@@ -55,6 +56,29 @@ public class PaymentService {
             reservation.setPayments(payments);
         }
 
+    }
+
+    public IamportResponse<Payment> removePayment(String impUid) throws IamportResponseException, IOException {
+        IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);
+        return iamportResponse;
+    }
+
+    // 결제 취소
+    public IamportResponse<Payment> cancelPayment(PaymentsCancelRequest cancelRequest)
+            throws IamportResponseException, IOException {
+        IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(cancelRequest.getImpUid());
+        CancelData cancelData = new CancelData(iamportResponse.getResponse().getImpUid(), true);
+        IamportResponse<Payment> payment_response = iamportClient.cancelPaymentByImpUid(cancelData);
+
+        if (payment_response.getCode() != 0) {
+            System.out.println("getMessage : " + payment_response.getMessage());
+        } else {
+            System.out.println("getStatus " + payment_response.getResponse().getStatus());
+            payments = paymentRepository.findByImpUid(cancelRequest.getImpUid());
+            payments.setStatus(payment_response.getResponse().getStatus());
+            paymentRepository.save(payments);
+        }
+        return payment_response;
     }
 
 }

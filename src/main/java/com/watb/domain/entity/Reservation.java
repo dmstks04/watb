@@ -33,9 +33,9 @@ public class Reservation {
     private User user; // 예약자
     private String merchantUid; // 주문번호
     private LocalDate reservationDate; // 예약일
-    private String reservationTime; // 예약 시간
-    private String usageTime; // 이용 시간
-    private String guestCount; // 인원수
+    private Integer reservationTime; // 예약 시간
+    private Integer usageTime; // 이용 시간
+    private Integer guestCount; // 인원수
     private Integer amount; // 가격
     private LocalDateTime created; // 등록날짜
     @OneToOne(fetch = FetchType.LAZY)

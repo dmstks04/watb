@@ -45,7 +45,6 @@ public class UserController {
 		model.addAttribute("userLoginRequest", new UserLoginRequest());
 		model.addAttribute("error", error);
 		model.addAttribute("exception", exception);
-
 		return "auth/login";
 	}
 
