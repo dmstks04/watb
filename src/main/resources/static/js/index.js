@@ -361,7 +361,7 @@ function addOption() {
 	selectOptValue = optValue;
 	optionBox.appendChild(newBox);
 	optionInfo.push({
-		name: optValue,
+		value: optValue,
 		quantity: countValue,
 		price: optPrice
 	});
@@ -389,6 +389,7 @@ function countOption(btn) {
 	priceElement.textContent = optPriceTotal;
 	input.value = countValue;
 	const index = Array.from(box.parentNode.children).indexOf(box);
+	
 	optionInfo[index].quantity = countValue;
 	optionInfo[index].price = optPriceTotal;
 	console.log(optionInfo);
