@@ -35,7 +35,7 @@ public class ReservationService {
     public Long reservation(ReservationRequest request, String loginId) {
         User loginUser = userRepository.findByLoginId(loginId).get();
         try {
-            Reservation saveReserve = reservationRepository.saveAndFlush(request.toEntity(loginUser));
+            Reservation saveReserve = reservationRepository.save(request.toEntity(loginUser));
             return saveReserve.getId();
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("예약 중복입니다.");
@@ -144,6 +144,12 @@ public class ReservationService {
         System.out.println("compare == " + compare);
 
         return compare;
+    }
+
+    @Transactional
+    public void removeReservation(String merchantUid) {
+        Reservation reservation = reservationRepository.findByMerchantUid(merchantUid);
+        reservationRepository.delete(reservation);
     }
 
 }

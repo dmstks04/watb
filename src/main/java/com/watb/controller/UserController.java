@@ -1,9 +1,14 @@
 package com.watb.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +17,7 @@ import com.watb.domain.dto.UserJoinRequest;
 import com.watb.domain.dto.UserLoginRequest;
 import com.watb.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -27,7 +33,16 @@ public class UserController {
 	}
 
 	@PostMapping("/join")
-	public String join(Model model, UserJoinRequest request, BindingResult bindingResult) {
+	public String join(Model model, @Valid @ModelAttribute UserJoinRequest request, BindingResult bindingResult) {
+		// if (bindingResult.hasErrors()) {
+		// model.addAttribute("UserJoinRequest", request);
+		// Map<String, String> errorMap = new HashMap<>();
+		// for (FieldError error : bindingResult.getFieldError()) {
+		// errorMap.put("valid_" + error.getField(), error.getDefaultMessage());
+		// }
+		// return "auth/join";
+		// }
+
 		if (userService.joinValid(request, bindingResult).hasErrors()) {
 			return "auth/join";
 		}

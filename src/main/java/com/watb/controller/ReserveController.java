@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,22 +19,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.watb.domain.dto.ReservationDTO;
 import com.watb.domain.dto.ReservationRequest;
 import com.watb.domain.dto.ReserveDateRequest;
-import com.watb.domain.entity.Reservation;
 import com.watb.service.ReservationService;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
 @RequiredArgsConstructor
-@RequestMapping("/watb")
+@Controller
 public class ReserveController {
 
 	private final ReservationService reservationService;
-
-	@GetMapping("")
-	public String home() {
-		return "home";
-	}
 
 	@GetMapping("/mypage")
 	public String myPage(Model model) {
@@ -44,13 +38,12 @@ public class ReserveController {
 		return "mypage";
 	}
 
-	@GetMapping("/reserve")
+	@GetMapping(value = { "", "/" })
 	public String reservePage(Model model) {
-
 		return "reserve";
 	}
 
-	@GetMapping("/reserve/detail")
+	@GetMapping("/detail")
 	public String detailPage() {
 		return "reserveDetail";
 	}
@@ -75,10 +68,16 @@ public class ReserveController {
 	@PostMapping("/reserve/cancel")
 	@ResponseBody
 	public int getReservationByMerchantUid(@RequestParam String id) {
-		System.out.println("컨트롤러 " + id);
 		Long reserveId = Long.parseLong(id);
 		int compare = reservationService.getReservationByMerchantUid(reserveId);
 		return compare;
 	}
 
+	@PostMapping("/reserve/invalid")
+	@ResponseBody
+	public ResponseEntity<Void> removeInvalidReseravtion(@RequestParam String merchantUid) {
+		System.out.println("merchantUid " + merchantUid);
+		reservationService.removeReservation(merchantUid);
+		return ResponseEntity.ok().build();
+	}
 }

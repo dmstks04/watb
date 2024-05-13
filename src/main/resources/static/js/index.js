@@ -72,7 +72,6 @@ const renderCalender = () => {
 			if (i <= (formattedDates.length - total)) {
 				condition = '';
 			}
-			
 		}
 		
 		formattedDates[i] = `<button type="button" value=${i} class="date${condition ? ` ${condition}` : ''}${todayClass ? ` ${todayClass}` : ''} ">
@@ -134,7 +133,6 @@ function createUlElement() {
 
 // 시간 버튼 로딩
 function createTimeBtns(reservationTime, isToday) {
-	
 	let ulElement;
 	let currentHour = new Date().getHours();
 	const timeSlot = document.querySelector('.calender-time-slot');
@@ -183,7 +181,7 @@ document.addEventListener('click', event => {
 		viewDate = date.setDate(clickText);
 		changeMonth(clickText);
 		sessionStorage.setItem("reservationDay", clickText);
-		selectDate();
+		renderTimeButtons();
 	}
 
 	if (event.target.classList.contains('time_btn')) {
@@ -193,7 +191,7 @@ document.addEventListener('click', event => {
 	}
 });
 
-function selectDate() {
+function renderTimeButtons() {
 	const year = sessionStorage.getItem("reservationYear");
 	const month = sessionStorage.getItem("reservationMonth");
 	const day = sessionStorage.getItem("reservationDay");
@@ -215,7 +213,7 @@ function selectDate() {
 		
 	$.ajax({
 		type: 'POST',
-		url: '/watb/reserve/date',
+		url: '/reserve/date',
 		contentType: 'application/json',
 		data: JSON.stringify({
 			"year" : year,
@@ -230,9 +228,8 @@ function selectDate() {
 			console.log(error)
 		}
 	})
-	
-	// createTimeBtns(reservationTime, false);
 }
+
 
 function changeMonth(clickText) {
 	renderCalender();
@@ -257,10 +254,7 @@ guestCountBtns.forEach(btn => {
 
 timeBtns.forEach(btn => {
 	btn.addEventListener('click', () => {
-		// sessionStorage.setItem("reservationTime", btn.value);
-		// console.log(btn.value)
 		addSelectedClass(btn, timeBtns);
-		
 	})
 })
 
@@ -277,7 +271,7 @@ saveBtn.addEventListener('click', () => {
 	const usageTimeValue = document.querySelector('input[name="flexRadioDefault"]:checked');
 	sessionStorage.setItem("usageTime", JSON.stringify(usageTimeValue.value));
 	sessionStorage.setItem("optionInfo", JSON.stringify(optionInfo));
-	window.location.href = `/watb/reserve/detail`;
+	window.location.href = `/detail`;
 });
 
 // ==============================
@@ -292,8 +286,6 @@ const amountFormatter = new Intl.NumberFormat('kr', {
 })
 
 window.addEventListener('load', () => {
-	calculatePrice();
-	selectDate();
 	const todayBtn = document.querySelector('.today');
 	todayBtn.classList.add('selected');
 	const guestBtn = document.querySelector('.count_btn.selected');
@@ -301,6 +293,8 @@ window.addEventListener('load', () => {
 	sessionStorage.setItem('reservationMonth', JSON.stringify(viewMonth + 1));
 	sessionStorage.setItem('reservationDay', JSON.stringify(viewDate));
 	sessionStorage.setItem('guestCount', JSON.stringify(guestBtn.value));
+	calculatePrice();
+	renderTimeButtons();
 });
 
 const radioBtn = document.querySelectorAll('input[name="flexRadioDefault"]');

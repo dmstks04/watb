@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const usageTime = JSON.parse(sessionStorage.getItem("usageTime"));
     const optionInfo = JSON.parse(sessionStorage.getItem("optionInfo"));
     const price = JSON.parse(sessionStorage.getItem("price"));
-
     const countInfo = document.querySelector('.count_info');
     const dateInfo = document.querySelector('.date_info');
     const option = document.querySelector('.option_info');
@@ -27,6 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
     dateInfo.innerHTML = `${reservationMonth}.${reservationDay}(${formatter.format(date)}) ${reservationTime}시 ~ ${parseInt(reservationTime)+parseInt(usageTime)}시`;
     countInfo.innerHTML = `${guestCount}명`;
     option.innerHTML = optionInfo.length === 0  || optionInfo === null ? '없음'
-        : optionInfo.map(option => `${option.name}(${option.quantity}개)`).join(', ');
+        : optionInfo.map(option => `${option.value}(${option.quantity}개)`).join(', ');
     priceInfo.innerHTML = `<strong>${price}원</strong>`;
 });
