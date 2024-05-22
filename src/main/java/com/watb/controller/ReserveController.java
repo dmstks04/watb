@@ -38,7 +38,8 @@ public class ReserveController {
 		return "mypage";
 	}
 
-	@GetMapping(value = { "", "/" })
+	// @GetMapping(value = { "/", "/reserve" })
+	@GetMapping("/reserve")
 	public String reservePage(Model model) {
 		return "reserve";
 	}

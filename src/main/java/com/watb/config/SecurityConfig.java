@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/")
                         .successHandler((req, resp, authentication) -> {
                             System.out.println("디버그 : 로그인이 완료되었습니다.");
-                            resp.sendRedirect("/");
+                            resp.sendRedirect("/reserve");
                         })
                         .failureHandler(userLoginFailHandler))
 
