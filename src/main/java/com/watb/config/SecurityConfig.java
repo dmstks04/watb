@@ -30,7 +30,6 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
-                                mvc.pattern("/"),
                                 mvc.pattern("/auth/**"),
                                 mvc.pattern("/css/**"))
                         .permitAll()

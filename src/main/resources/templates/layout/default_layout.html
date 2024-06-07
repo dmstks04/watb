@@ -8,13 +8,6 @@
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-
-
-
-
-
-
-    <!-- 각 페이지의 script가 작성될 위치 -->
     <!--<th:block layout:fragment="script"></th:block>-->
     <!-- 각 페이지의 css가 작성될 위치 -->
     <!-- <th:block layout:fragment="css">
@@ -23,12 +16,14 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 
-<body>
+<body th:with="footer=${footer == null ? true : false}">
     <div th:replace="~{fragments/header::header}"></div>
 
     <div layout:fragment="content" class="content"></div>
 
-    <div th:replace="~{fragments/footer::footer}"></div>
+    <th:block th:if="${footer}">
+        <div th:replace="~{fragments/footer::footer}"></div>
+    </th:block>
 </body>
 
 </html>

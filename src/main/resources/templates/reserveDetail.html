@@ -29,6 +29,14 @@
 					<div class="card_inner">
 						<ul class="card_info_list">
 							<li class="card_info_item">
+								<div class="title">예약자</div>
+								<div id="name" th:text="${#authentication.getPrincipal()?.getNickname()}"></div>
+							</li>
+							<li class="card_info_item">
+								<div class="title">이메일</div>
+								<div id="email" th:text="${#authentication.getPrincipal()?.getUsername()}"></div>
+							</li>
+							<li class="card_info_item">
 								<div class="title">일정</div>
 								<div class="date_info"></div></span>
 							</li>
@@ -48,33 +56,15 @@
 					</div>
 				</div>
 			</section>
-			<!-- <section class="bg-white">
-				<h5 class="section_title">예약자 정보</h5>
-				<div class="section_inner">
-					<div class="input-container">
-						<div class="input-group">
-							<label for="input1">예약자</label>
-							<input type="text" name="name" id="name"
-								th:value="${#authentication.getPrincipal()?.getNickname()}" maxlength="40"
-								aria-required="true" placeholder="예약자 이름을 입력해주세요." readonly>
-						</div>
-						<div class="input-group">
-							<label for="input2">연락처(필수)</label>
-							<input type="text" id="input2" name="input2" readonly>
-						</div>
-						<div class="input-group">
-							<label for="input3">이메일</label>
-							<input type="email" id="email" th:value="${#authentication.getPrincipal()?.getUsername}"
-								readonly>
-						</div>
-						<div class="input-group">
-							<label>요청사항</label>
-							<textarea cols="30" rows="3" maxlength="500" placeholder="요청하실 내용을 적어주세요."></textarea>
-							<input type="hidden" id="merchantUid" value="${merchantUid}">
-						</div>
-					</div>
+			<section>
+				<h5>예약 취소 및 환불 규정</h5>
+				<div>
+					1일 전 ~ 예약 당일 환불 불가
 				</div>
-			</section> -->
+				<div>
+					당일 예약 후 환불 시 관리자에게 문의 바랍니다.
+				</div>
+			</section>
 			<section>
 				<div style="display: flex;">
 					<div>

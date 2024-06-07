@@ -527,3 +527,25 @@ tbody tr:hover {
     border-radius: 7px;
     border: 1px solid #3450A5;
 }
+
+/* auth */
+.auth {
+    margin-top: 50px;
+    height: 550px;
+}
+
+/* chat */
+.chatElement {
+    overflow-y: auto;
+    height: 400px;
+    display: flex;
+    flex-direction: column-reverse;
+    order: 0 !important;
+}
+
+table {
+    table-layout: auto;
+}
+tr {
+    height: 100px;
+}

@@ -12,11 +12,10 @@
 
 	<body>
 		<div class="main list">
-			<!-- <section class="section_info bg-white"> -->
-			<section class="bg-white">
+			<section>
 				<!-- <p th:if="${not #strings.isEmpty(reservations.id)}"></p> -->
 				<div th:if="${reservations == null or reservations.size() == 0}">
-					<p>내역없음</p>
+					<p>예약 내역이 없습니다.</p>
 				</div>
 
 				<div th:unless="${#lists.isEmpty(reservations)}">
@@ -25,38 +24,49 @@
 					<!-- <p>결제하셨어요.</p> -->
 					<table class="table-col">
 						<colgroup>
-							<col style="width:5%">
-							<col style="width:10%">
-							<col style="width:10%">
-							<col style="width:10%">
+							<col style="width:20%">
+							<col style="width:20%">
+							<col style="width:20%">
 							<col style="width:15%">
-							<col style="width:15%">
+							<col style="width:7%">
 						</colgroup>
 						<thead style="text-align: center;">
 							<tr>
-								<th scope="col">번호</th>
+								<th scope="col">예약일시</th>
 								<th scope="col">예약정보</th>
-								<!-- <th scope="col">옵션</th> -->
-								<th scope="col">주문번호</th>
+								<th scope="col">대여물품</th>
 								<th scope="col">결제금액</th>
 								<th scope="col" colspan="2">주문상태</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="reservation : ${reservations}">
-								<td th:text="${reservation.id}"></td>
+								<td th:text="${reservation.created}"></td>
 								<td>
 									<div>
-										<ul style="padding: 0;">
-											<li class="" th:text="${reservation.reservationDate}"></li>
-											<li class="time" th:text="${reservation.reservationTime +'~'}"></li>
-											<li class="usage" th:text="${reservation.usageTime+'시간'}"></li>
-											<li class="guest" th:text="${reservation.guestCount+'명'}"></li>
+										<ul style="padding: 0; display: flex;padding: 0;flex-wrap: wrap;">
+											<li class="" th:text="${reservation.reservationDate}"
+												style="width: 48%; font-weight: bold;">
+											</li>
+											<li class="time" th:text="${', '+ reservation.reservationTime +'시'}"
+												style="width: 30%; font-weight: bold;"></li>
+											<li class="usage" th:text="${reservation.usageTime+'시간'}"
+												style="width: 55%;"></li>
+											<li class="guest" th:text="${reservation.guestCount+'명'}"
+												style="width: 20%;"></li>
 										</ul>
 									</div>
 								</td>
-								<td th:text="${reservation.merchantUid}"></td>
-								<!-- <td>없음</td> -->
+								<!-- <td
+									th:text="${not #lists.isEmpty(reservation.optionInfo) ? reservation.optionInfo : '없음'}">
+								</td> -->
+								<td th:if="${not #lists.isEmpty(reservation.optionInfo)}">
+									<ul th:each="option : ${reservation.optionInfo}">
+										<!-- <li th:text="${'사이즈: ' + option.value + '개수 : ' + option.quantity}"></li> -->
+										<li th:text="|풋살화: ${option.size}, ${option.quantity}개|"></li>
+									</ul>
+								</td>
+								<td th:if="${#lists.isEmpty(reservation.optionInfo)}" th:text="'없음'"></td>
 								<td th:text="${reservation.amount+'원'}"></td>
 								<td>
 									<th:block th:if="${reservation.payments.status == 'paid'}">
@@ -72,7 +82,7 @@
 											th:attr="data-impUid=${reservation.payments.impUid}">예약취소</button>
 									</th:block>
 									<th:block th:if="${reservation.payments.status == 'cancelled'}">
-										<button type="button" disabled="true">작성불가</button>
+										<button type="button" disabled="true">예약취소</button>
 									</th:block>
 								</td>
 							</tr>

@@ -33,7 +33,6 @@ public class Payments {
     @OneToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

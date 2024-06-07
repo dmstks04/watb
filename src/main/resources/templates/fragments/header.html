@@ -20,9 +20,6 @@
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/reserve">실시간 예약</a>
 					</li>
-					<li class="nav-item">
-						<!-- <a class="nav-link active" aria-current="page" href="/boards/gold">오시는 길</a> -->
-					</li>
 				</ul>
 			</div>
 			<div class="justify-content-between" id="navbarNav" style="padding: 5px 30px">
@@ -38,9 +35,12 @@
 				</ul>
 				<!--                 로그인 했을때 -->
 				<ul class="navbar-nav" sec:authorize="isAuthenticated()">
-					<li class="nav-item" sec:authorize="hasAuthority('AMDIN')">
+					<!-- <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
 						<a class="nav-link active" aria-current="page" href="/auth/admin">관리자 페이지</a>
-					</li>
+					</li> -->
+					<!-- <li class="nav-item" sec:authorize="hasAuthority('USER')">
+						<a class="nav-link active" aria-current="page" href="/mypage">마이페이지</a>
+					</li> -->
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/mypage">마이페이지</a>
 					</li>

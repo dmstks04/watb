@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.watb.domain.entity.User;
 
 public class UserDetail implements UserDetails {
-	private User user;
+	private final User user;
 
 	public UserDetail(User user) {
 		this.user = user;

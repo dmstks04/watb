@@ -2,6 +2,8 @@ package com.watb.domain.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +22,7 @@ public class ReservationDTO {
     private Integer usageTime;
     private Integer guestCount;
     private Integer amount;
+    private List<Map<String, Integer>> optionInfo;
     private LocalDateTime created;
     private UserDTO user;
     private PaymentsDTO payments;

@@ -3,7 +3,8 @@ package com.watb.domain.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+import java.util.List;
+import java.util.Map;
 import com.watb.domain.entity.Reservation;
 import com.watb.domain.entity.User;
 
@@ -24,6 +25,7 @@ public class ReservationRequest {
     private Integer amount; // 가격
     private LocalDateTime created; // 등록날짜
     private String merchantUid;
+    private List<Map<String, Integer>> optionInfo;
 
     public Reservation toEntity(User user) {
         LocalDate reservationDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month),
@@ -40,6 +42,7 @@ public class ReservationRequest {
                 .guestCount(guestCount)
                 .amount(amount)
                 .merchantUid(merchantUid)
+                .optionInfo(optionInfo)
                 .created(dateTime)
                 .build();
     }

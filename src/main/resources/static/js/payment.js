@@ -22,11 +22,19 @@ var seconds = today.getSeconds().toString();
 var milliseconds = today.getMilliseconds().toString();
 var merchantUid = years + hours + minutes + seconds + milliseconds;
 
+let filterOptionInfo = optionInfo.map(item => {
+    return {
+        size: item.size,
+        quantity: item.quantity
+    }
+});
+
 const onclickPay = async () => { 
     // 1. 예약 저장
     // 2. 예약 중복 방지
     // 3. 결제
     // 4. 결제 검증
+    
     $.ajax({
         type: 'POST',
         url: `/reserve/${merchantUid}`,
@@ -38,12 +46,11 @@ const onclickPay = async () => {
             day: reservationDay,
             reservationTime: parseInt(reservationTime),
             usageTime: parseInt(usageTime),
-            optionInfo: optionInfo, 
+            optionInfo: filterOptionInfo, 
             amount: parseInt(amount),
             merchantUid: `MID${merchantUid}`
         }),
-        success: function (response) {
-            console.log(response)
+        success: function () {
             paymentCallback();
         },
         error: function (xhr) {
@@ -64,8 +71,8 @@ function paymentCallback() {
         merchant_uid: `MID${merchantUid}`,
         name: "구장 예약",
         amount: parseInt(amount), // String 아님 유의
-        buyer_email: $("#email").val(),
-        buyer_name: $("#name").val()
+        buyer_email: $("#email").text(), // 얘가 없음
+        buyer_name: $("#name").text() // 얘가 없음
     }, function (rsp) { 
         if (rsp.success) {
             $.ajax({
@@ -79,7 +86,7 @@ function paymentCallback() {
                     "paidAt": rsp.paid_at,
                     "status": rsp.status
                 }),
-                success: function (response) {
+                success: function () {
                     alert("예약 완료 되었습니다!");
                     window.location.href = `/mypage`;
                 },
@@ -91,7 +98,8 @@ function paymentCallback() {
         } else {
             // 예약 내역 삭제
             invalidReservation(rsp);
-            alert(rsp.error_msg);
+            console.log("결제 취소 되어 예약 내역 삭제")
+            // alert(rsp.error_msg);
         }
     });
 }

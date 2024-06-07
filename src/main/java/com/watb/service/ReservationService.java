@@ -120,6 +120,7 @@ public class ReservationService {
                     .usageTime(reservation.getUsageTime())
                     .amount(reservation.getAmount())
                     .created(reservation.getCreated())
+                    .optionInfo(reservation.getOptionInfo())
                     .guestCount(reservation.getGuestCount())
                     .payments(paymentsDTO)
                     .build();

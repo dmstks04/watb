@@ -33,13 +33,10 @@ const renderCalender = () => {
 	
 	const prevMonthLastDate = previousMonth.getDate();
 	const prevMonthLastDay = previousMonth.getDay();
-	
 	const curMonthLastDate = currentMonth.getDate();
 	const curMonthLastDay = currentMonth.getDay();
-	
-	
+	// 1 부터 마지막 날 까지 배열로 생성
 	currentMonthDates =  [...Array(curMonthLastDate + 1).keys()].slice(1);
-	
 
 	if(prevMonthLastDay !== 6) {
 		for(let i = 0; i <= prevMonthLastDay; i++){
@@ -47,6 +44,7 @@ const renderCalender = () => {
 		}
 	}
 
+	// 7 - 마지막날 요일 = 다음달 날짜 출력
 	for(let i = 1; i < 7 - curMonthLastDay; i ++) {
 		nextMonthDates.push(i);
 	}
@@ -355,11 +353,10 @@ function addOption() {
 	selectOptValue = optValue;
 	optionBox.appendChild(newBox);
 	optionInfo.push({
-		value: optValue,
+		size: optValue,
 		quantity: countValue,
 		price: optPrice
 	});
-	
 	calculatePrice();
 }
 
@@ -386,8 +383,6 @@ function countOption(btn) {
 	
 	optionInfo[index].quantity = countValue;
 	optionInfo[index].price = optPriceTotal;
-	console.log(optionInfo);
-
 	calculatePrice();
 }
 

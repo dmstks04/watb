@@ -2,7 +2,12 @@ package com.watb.domain.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
+import com.watb.config.StringListConverter;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +43,8 @@ public class Reservation {
     private Integer guestCount; // 인원수
     private Integer amount; // 가격
     private LocalDateTime created; // 등록날짜
+    @Convert(converter = StringListConverter.class) // JSON타입인 옵션을 리스트로 저장
+    private List<Map<String, Integer>> optionInfo;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payments_id")
     private Payments payments;

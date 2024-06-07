@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <footer th:fragment="footer">
+    <!-- <footer th:fragment="footer"> -->
     <!-- Footer-->
-    <footer class="border-t py-5" style="border-top: 1px solid #e5e7eb">
-        <!-- <input type="hidden" id="username" th:value="${#authentication.getPrincipal()?.getUsername()}"> -->
-        <!-- <div class="chatArea" style="">
+    <div class="border-t py-5" style="border-top: 1px solid #e5e7eb">
+        <!-- <p th:text="${footer}" style="color: black;">footer test</p> -->
+        <input type="hidden" id="username" th:value="${#authentication.getPrincipal()?.getUsername()}">
+        <!-- <div class="chatArea">
             <button class="chatBtn" aria-expanded="false"
                 style="border: none; background-color: #e5e7eb; border-radius: 100%; width: 70px; height: 70px;">
                 <img th:src="@{/img/chat_7988854.png}" style="width: 40px;">
             </button>
-            <div class="chatBox"> -->
-        <!-- <div class="container" style="height: 400px;">
-                    <div class="col-6">
-                        <label><b>실시간 문의</b></label>
-                    </div>
-                    <div>
-                        <div id="msgArea" class="col"></div>
-                        <div class="col-10" style="position: absolute; bottom: 0px;">
-                            <div class="input-group">
-                                <input type="text" id="msg" class="form-control" aria-label="Recipient's username"
-                                    aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" id="button-send">전송</button>
-                                </div>
-                            </div>
+            <div class="chatBox">
+                <div class="col-6">
+                    <label><b>실시간 문의</b></label>
+                </div>
+                <div class="chatElement container">
+                    <div id="msgArea"></div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group">
+                        <input type="text" id="msg" class="form-control" aria-label="Recipient's username"
+                            aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="button-send">전송</button>
                         </div>
                     </div>
-                </div> -->
-        <!-- </div>
-        </div>
-        <script th:src="@{/js/chat.js}"></script> -->
-    </footer>
+                </div>
+            </div>
+        </div> -->
+        <!-- <script th:src="@{/js/chat.js}"></script> -->
+    </div>
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </footer>

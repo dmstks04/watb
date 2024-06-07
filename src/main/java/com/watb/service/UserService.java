@@ -12,6 +12,7 @@ import com.watb.domain.dto.UserLoginRequest;
 import com.watb.domain.entity.User;
 import com.watb.repository.UserRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,10 +24,19 @@ public class UserService {
 
 	// 회원가입
 	public void join(UserJoinRequest request) {
-		// if (!request.getPassword().equals(request.getPasswordCheck())) {
-		//
-		// }
 		userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
+		System.out.println("회원가입 - join 메서드");
+	}
+
+	// 회원가입 유효성 검사
+	public String validateJoin(UserJoinRequest request) {
+		String validateMessage = null;
+		if (userRepository.existsByLoginId(request.getLoginId())) {
+			validateMessage = "사용중인 이메일입니다.";
+		} else if (!request.getPassword().equals(request.getPasswordCheck())) {
+			validateMessage = "비밀번호가 일치하지 않습니다.";
+		}
+		return validateMessage;
 	}
 
 	// 로그인
@@ -40,26 +50,6 @@ public class UserService {
 			return null;
 		}
 		return user;
-	}
-
-	public BindingResult joinValid(UserJoinRequest req, BindingResult bindingResult) {
-		if (req.getLoginId().isEmpty()) {
-			bindingResult.addError(new FieldError("req", "loginId", "아이디가 비어있습니다."));
-		} else if (req.getLoginId().length() > 10) {
-			bindingResult.addError(new FieldError("req", "loginId", "아이디가 10자가 넘습니다."));
-		} else if (userRepository.existsByLoginId(req.getLoginId())) {
-			bindingResult.addError(new FieldError("req", "loginId", "아이디가 중복됩니다."));
-		}
-
-		if (req.getPassword().isEmpty()) {
-			bindingResult.addError(new FieldError("req", "password", "비밀번호가 비어있습니다."));
-		}
-
-		if (!req.getPassword().equals(req.getPasswordCheck())) {
-			bindingResult.addError(new FieldError("req", "passwordCheck", "비밀번호가 일치하지 않습니다."));
-		}
-
-		return bindingResult;
 	}
 
 }
